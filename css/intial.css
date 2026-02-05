@@ -17,6 +17,16 @@ body{
   border-radius:10px
 
 }
+#usernameInput {
+  flex-grow:1;
+  width:max-content;
+  border: solid 1px #ff2f2f;
+  background-color:#0e0e0e;
+  padding: 5px;
+  border-radius:5px;
+  color:aliceblue;
+  cursor:text;
+}
 
 .chat-window {
   scroll-behavior: smooth;
@@ -65,4 +75,14 @@ body{
   color:aliceblue;
   cursor:pointer;
   
+}
+
+#username-btn {
+  padding:3px 10px;
+  border: solid 1px #ff2f2f;
+  background-color:#0e0e0e;
+  width:fit-content;
+  border-radius:5px;
+  color:aliceblue;
+  cursor:pointer;
 }

@@ -4,7 +4,9 @@ export const initChatUi = {
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
     const user = document.getElementById('usernameInput')
-    
+    const usrBtn = document.getElementById('username-btn')
+
+
     const renderMessage = (msg) => {
       const msgDiv = document.createElement('div');
       msgDiv.className = 'message-item'; 
@@ -13,9 +15,24 @@ export const initChatUi = {
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
+    usrBtn.addEventListener('click', () => {
+      const username = user.value || 'anonymous'
+      if (username) {
+        localStorage.setItem('chat-nickname', username)
+        user.value = ''
+        usrBtn.innerText = "Saved!"
+        usrBtn.style.backgroundColor = "#4caf50"
+        setTimeout(() => {
+          usrBtn.innerText = "Save"
+          usrBtn.style.backgroundColor = ""
+
+        }, 2000)        
+      }
+    })
+
     btn.addEventListener('click', () => {
       const text = input.value
-      const username = user.value || 'Anonymous';
+      const username = localStorage.getItem('chat-nickname') || "Anonymous"
       if (text.trim() !== '') {
         serviceBag.send(text, username);
         input.value = ""

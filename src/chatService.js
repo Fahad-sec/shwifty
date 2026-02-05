@@ -1,8 +1,11 @@
 export const chatService =  {
-  send: async (supabaseClient, messageText) => {
+  send: async (supabaseClient, messageText, username) => {
      const {error} = await supabaseClient
      .from('messages')
-     .insert([{content: messageText}]);
+     .insert([{
+      content: messageText,
+      username: username
+    }]);
 
      if (error) console.error(error)
   },
@@ -11,7 +14,7 @@ export const chatService =  {
     const {data, error} = await supabaseClient
     .from('messages')
     .select('*')
-    .order('created_at', {accending: true})
+    .order('created_at', {ascending: true})
     if (error) {
       console.error('history error: ', error);
       return[];

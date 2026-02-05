@@ -19,6 +19,7 @@ body{
 }
 
 .chat-window {
+  scroll-behavior: smooth;
   margin-top:5px;
   display:flex;
   flex-grow:1;

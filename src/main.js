@@ -8,7 +8,7 @@ import {chatService} from './chatService.js'
 
 
 const serviceBag = {
-  send: (text) => chatService.send(supaBase, text),
+  send: (text, username) => chatService.send(supaBase, text, username),
   getHistory: () => chatService.getHistory(supaBase),
   subscribe: (callback) => {
     return supaBase

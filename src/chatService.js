@@ -1,11 +1,14 @@
 export const chatService =  {
-  send: async (supabaseClient, messageText, username) => {
+  send: async (supabaseClient, messageText, userId, username) => {
      const {error} = await supabaseClient
      .from('messages')
      .insert([{
       content: messageText,
-      username: username
-    }]);
+      username: username,
+      user_id: userId
+    }])
+    .select()
+    .single();
 
      if (error) console.error(error)
   },

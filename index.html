@@ -2,26 +2,29 @@
 <html>
   <head>
     <link rel="stylesheet" href="./css/intial.css">
-    <title>Shwifty</title>
-    <p class="Echo">Shwifty</p>
+    <title>Authentication</title>
+    <p class="Echo">Shwifty - Login</p>
    </head>
   <body>
-    
-    <div>
-      <input type="text" id="usernameInput" placeholder="Type Nickname" maxlength="15">
-      <button id="username-btn">Save</button>
-    </div>
 
-    <div class="chat-window" id="chat-window">
-    </div>
+    <div class="auth-container">
+      <h2>Welcome to Shwifty</h2>
+      <input type="text" id="username" placeholder="Pick a username">
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="password">
 
-    <div class="input-area">
-     <input type="text" id="messageInput" placeholder="Type a message...">
-     <button id="send-btn">Send</button>
+      <div class="auth-buttons">
+        <button id="login-btn">Login</button>
+        <button id="signup-btn">Sign up</button>
+      </div>
+
+
+
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" ></script>
+    <script src="./src/auth.js" type="module"></script>
     <script src="./src/main.js" type="module"></script>
   </body>
 </html>

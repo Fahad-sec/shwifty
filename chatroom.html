@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="./css/intial.css">
+    <title>Shwifty</title>
+    <p class="Echo">Shwifty</p>
+   </head>
+  <body>
+    
+    <div>
+      <input type="text" id="usernameInput" placeholder="Type Nickname" maxlength="15">
+      <button id="username-btn">Save</button>
+      <button id="logout-btn">Logout</button>
+    </div>
+
+    <div class="chat-window" id="chat-window">
+    </div>
+
+    <div class="input-area">
+     <input type="text" id="messageInput" placeholder="Type a message...">
+     <button id="send-btn">Send</button>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" ></script>
+    <script src="./src/main.js" type="module"></script>
+  </body>
+</html>

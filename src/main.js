@@ -2,7 +2,7 @@ import {supaBase} from './supabase.js'
 console.log('Echo App: Checking Connetion')
 import {initChatUi} from './initChatUI.js'
 import {chatService} from './chatService.js'
-
+import {checkUser} from './auth.js'
 
 
 
@@ -22,3 +22,8 @@ const serviceBag = {
 }
 
 initChatUi.setup(serviceBag)
+
+
+
+
+checkUser(supaBase);

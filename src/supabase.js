@@ -1,4 +1,4 @@
-const supaBaseUrl = 'https://qcqlishqomjelvszhewn.supabase.co';
-const supaBaseKey = 'sb_publishable_P45HDCaZ3AIZ6bvJIx1-9Q_hwpBSRWF';
+const supaBaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supaBaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
 export const supaBase = window.supabase.createClient(supaBaseUrl, supaBaseKey)

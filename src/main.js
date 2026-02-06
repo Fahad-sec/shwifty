@@ -43,5 +43,3 @@ initChatUi.setup(serviceBag, userId)
 
 startApp();
 
-
-

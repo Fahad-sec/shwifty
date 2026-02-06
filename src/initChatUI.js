@@ -8,20 +8,41 @@ export const initChatUi = {
     const renderMessage = (msg) => {
       const msgDiv = document.createElement('div');
       const isMine = msg.user_id === userId;
+      
+          let rawTime = msg.created_at;
+          let dateObj
+          if (rawTime) {
+          const utcString = rawTime.endsWith('Z') || rawTime.includes('+')
+          ? rawTime
+          : `${rawTime}Z`;
+            dateObj = new Date(utcString);
+          } else {
+            dateObj = new Date()
+          }
+
+          const time = dateObj.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          })
 
       msgDiv.className = `message-item ${isMine ? 'sent' : 'received'} ` 
-
       msgDiv.innerHTML = `
-      <div class="message-content">
-      <small class="user-label">${isMine ? 'Me' : (msg.username || 'anonymous')}</small>
-      <p class="text">${msg.content}</p>
-      </div>
+          <div class="message-content">
+          <div class="message-info">
+            <small class="user-label">${isMine ? 'Me' : (msg.username || 'anonymous')}</small>
+            <small class="timestamp">${time}</small>
+            </div>
+            <p class="text">${msg.content}</p>
+          </div>
       `;
+
+
       chatWindow.appendChild(msgDiv);
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-
+      
      const sendMessage = async () => {
       const text = input.value
 
@@ -31,14 +52,11 @@ export const initChatUi = {
       }
      }
     btn.addEventListener('click', sendMessage);
-
     input.addEventListener('keydown', (event) => {
      if (event.key === 'Enter') {
       sendMessage()
      }
     })
-
-
 
     serviceBag.getHistory().then((messages) => {
       console.log(messages || messages.content)
@@ -50,7 +68,17 @@ export const initChatUi = {
     serviceBag.subscribe((newMessage) => {
         renderMessage(newMessage)
     })
+    pageReload()
+
   }
+}
+
+const pageReload = () => {
+  const shwifty = document.querySelector('.Echo');
+
+  shwifty.addEventListener('click', () => {
+    window.location.reload();
+  })
 }
 
 

@@ -21,28 +21,24 @@ export const initChatUi = {
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    /*usrBtn.addEventListener('click', () => {
-      if (username) {
-        localStorage.setItem('chat-nickname', username)
-        user.value = ''
-        usrBtn.innerText = "Saved!"
-        usrBtn.style.backgroundColor = "#4caf50"
-        setTimeout(() => {
-          usrBtn.innerText = "Save"
-          usrBtn.style.backgroundColor = ""
 
-        }, 2000)        
-      }
-    })*/
-
-    btn.addEventListener('click', async() => {
+     const sendMessage = async () => {
       const text = input.value
 
       if (text.trim() !== '') {
        await serviceBag.send(text);
         input.value = ""
       }
+     }
+    btn.addEventListener('click', sendMessage);
+
+    input.addEventListener('keydown', (event) => {
+     if (event.key === 'Enter') {
+      sendMessage()
+     }
     })
+
+
 
     serviceBag.getHistory().then((messages) => {
       console.log(messages || messages.content)

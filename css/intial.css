@@ -77,12 +77,18 @@ body{
   
 }
 
-#username-btn {
-  padding:3px 10px;
+#logout-btn {
+  padding:10px 20px;
   border: solid 1px #ff2f2f;
   background-color:#0e0e0e;
-  width:fit-content;
-  border-radius:5px;
+  border-radius:10px;
   color:aliceblue;
   cursor:pointer;
+  width:10vh;
+}
+
+#logout-btn:hover, #send-btn:hover {
+  transform: scale(1.05);
+  background-color: #ff2f2f;
+  color: #0e0e0e;
 }

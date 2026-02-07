@@ -27,7 +27,6 @@ export const initChatUi = {
       const msgDiv = document.createElement('div');
 
       const isMine = msg.user_id === userId ;
-      console.log(msg.user_id, userId )
       
       
 
@@ -51,11 +50,18 @@ export const initChatUi = {
 
       
      const sendMessage = async () => {
-      const text = input.value
-
-      if (text.trim() !== '') {
-       await serviceBag.send(text);
+      const text = input.value.trim()
+      if (text !== '') {
+       const localMsg = {
+        content: text,
+        user_id: userId,
+        userName: 'Me',
+        created_at: new Date().toISOString()
+       }
+       renderMessage(localMsg)
         input.value = ""
+        await serviceBag.send(text);
+
       }
      }
     btn.addEventListener('click', sendMessage);
@@ -72,7 +78,9 @@ export const initChatUi = {
     })
 
     serviceBag.subscribe((newMessage) => {
+      if (newMessage.user_id !==userId) {
         renderMessage(newMessage)
+      }
     })
     pageReload()
 

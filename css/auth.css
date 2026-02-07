@@ -7,9 +7,36 @@ body {
   height: 100vh;
   margin:0;
   padding:0;
+  
+  background-color: #222;
+  display:none;
+  flex-direction:column;
+  height:100vh;
+  margin:0;
+  overflow-x:hidden;
+}
+
+
+.shwifty img {
+  height: 100%;
+  object-fit:contain;
+}
+.shwifty{
+  display: flex;
+  justify-content:center;
+  height: 8vh;
+  font-size:4vh;
+  color:#ff2f2f;
+  border: solid 1px #ff2f2f;
+  width:fit-content;
+  padding:5px;
+  border-radius:10px;
+  cursor: pointer;
+  box-shadow: 0px 5px 15px black
+
 }
 .auth-container{
-  margin-top: 20vh;
+
   background-color: #474444;  
   padding: 2rem;
   border-radius: 8px;

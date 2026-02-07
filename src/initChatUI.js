@@ -5,26 +5,32 @@ export const initChatUi = {
     const chatWindow = document.getElementById('chat-window')
 
 
-    const renderMessage = (msg) => {
-      const msgDiv = document.createElement('div');
-      const isMine = msg.user_id === userId;
-      
-          let rawTime = msg.created_at;
-          let dateObj
-          if (rawTime) {
-          const utcString = rawTime.endsWith('Z') || rawTime.includes('+')
-          ? rawTime
-          : `${rawTime}Z`;
-            dateObj = new Date(utcString);
-          } else {
-            dateObj = new Date()
-          }
+    const renderMessage = async (msg) => {
+        // time
+         let rawTime = msg.created_at;
+      let dateObj
+      if (rawTime) {
+      const utcString = rawTime.endsWith('Z') || rawTime.includes('+')
+      ? rawTime
+      : `${rawTime}Z`;
+        dateObj = new Date(utcString);
+      } else {
+        dateObj = new Date()
+      }
 
-          const time = dateObj.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-          })
+      const time = dateObj.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })
+      
+      const msgDiv = document.createElement('div');
+
+      const isMine = msg.user_id === userId ;
+      console.log(msg.user_id, userId )
+      
+      
+
 
       msgDiv.className = `message-item ${isMine ? 'sent' : 'received'} ` 
       msgDiv.innerHTML = `
@@ -40,6 +46,7 @@ export const initChatUi = {
 
       chatWindow.appendChild(msgDiv);
       chatWindow.scrollTop = chatWindow.scrollHeight;
+
     }
 
       
@@ -59,7 +66,6 @@ export const initChatUi = {
     })
 
     serviceBag.getHistory().then((messages) => {
-      console.log(messages || messages.content)
       messages.forEach((msg) => {
            renderMessage(msg)
       })

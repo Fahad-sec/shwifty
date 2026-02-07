@@ -27,6 +27,7 @@ body{
   display: none;
 }
 .chat-window {
+  display:flex;
   margin-left: auto;
   margin-right: auto;
   width:95%;
@@ -44,7 +45,6 @@ body{
 }
 
 .message-item {
-  align-self:flex-end;
   background-color: #ff2f2f;
   color:aliceblue;
   margin-top:5px;
@@ -126,4 +126,13 @@ body{
 
 .text{ 
   font-weight: 400;
+}
+
+.message-item.sent {
+    align-self: flex-end; 
+}
+
+.message-item.received {
+    background-color: #444;
+    align-self: flex-start; 
 }

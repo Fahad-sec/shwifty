@@ -55,9 +55,18 @@ logoutBtn.addEventListener('click', async () =>{
 
   const confirmed = confirm("Are you sure you want to logout?")
   if (confirmed) {
+
+  logoutBtn.disabled = true;
+  logoutBtn.innerText = "Logging Out..."
+  logoutBtn.style.opacity = "0.7";
+  logoutBtn.style.cursor = "not-allowed";
    
    const {error} = await supaBase.auth.signOut();
-    if (error) {
+  if (error) {
+      logoutBtn.disabled = false;
+      logoutBtn.innerText = "Logout"
+      logoutBtn.style.opacity = "1";
+      logoutBtn.style.cursor = "pointer";
     console.error("logout error: ", error)
   } else {
     console.log('successfully logged out ')
@@ -77,11 +86,21 @@ if (loginBtn && signupBtn) {
 loginBtn.addEventListener('click', async () => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+
+  loginBtn.disabled = true;
+  loginBtn.innerText = "Authentication..."
+  loginBtn.style.opacity = "0.7";
+  loginBtn.style.cursor = "not-allowed";
+
   const {data, error } = await supaBase.auth.signInWithPassword({
     email,
     password
   });
   if (error) {
+  loginBtn.disabled = false;
+  loginBtn.innerText = "Login"
+  loginBtn.style.opacity = "1";
+  loginBtn.style.cursor = "pointer";
     alert(error.message)
   }else {
     window.location.href = './chatroom.html'
@@ -92,6 +111,11 @@ signupBtn.addEventListener('click', async() => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const username = document.getElementById('username').value;
+
+      signupBtn.disabled = true;
+      signupBtn.innerText = "Signing up..."
+      signupBtn.style.opacity = "0.7";
+      signupBtn.style.cursor = "not-allowed";
   
 
   const {data, error } = await supaBase.auth.signUp({
@@ -103,6 +127,10 @@ signupBtn.addEventListener('click', async() => {
   });
 
   if (error) {
+      signupBtn.disabled = false;
+      signupBtn.innerText = "Sign up"
+      signupBtn.style.opacity = "1";
+      signupBtn.style.cursor = "pointer";
     alert(error.message);
   } else {
     alert('check your email for a confirmation linK!')

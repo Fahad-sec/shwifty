@@ -9,6 +9,7 @@ body {
   padding:0;
 }
 .auth-container{
+  margin-top: 20vh;
   background-color: #474444;  
   padding: 2rem;
   border-radius: 8px;
@@ -61,3 +62,11 @@ body {
   color: #0e0e0e;
 } 
 
+#auth-toggle:hover {
+  color: #ff2f2f;
+  transform: scale(1.05)
+}
+
+#signup-btn, #username {
+  display:none
+}

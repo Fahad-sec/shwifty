@@ -21,10 +21,33 @@ import {supaBase} from './supabase.js'
     }
 }); 
   
+let isLoginMode = true;
 
 const signupBtn = document.getElementById('signup-btn');
 const loginBtn = document.getElementById('login-btn');
 const logoutBtn = document.getElementById('logout-btn')
+const authToggle = document.getElementById('auth-toggle')
+const userName = document.getElementById('username')
+
+authToggle?.addEventListener('click', () => {
+  isLoginMode = !isLoginMode;
+
+  if (isLoginMode) {
+    authToggle.innerHTML = "Don't have an account?"
+    signupBtn.style.display = 'none'
+    userName.style.display = 'none'
+    loginBtn.style.display = 'flex'
+  } else {
+    loginBtn.style.display = 'none'
+    signupBtn.style.display = 'flex'
+    userName.style.display = 'flex'
+    authToggle.innerHTML = "Already have an account?"
+  }
+})
+
+
+
+
 
 
  if (logoutBtn) {

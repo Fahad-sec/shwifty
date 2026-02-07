@@ -6,6 +6,8 @@ body{
   margin:0;
 }
 
+
+
 .Echo{
   display:none;
   flex-direction:column;
@@ -117,6 +119,7 @@ body{
 }
 
 .user-label{
+  margin-right:0.5rem;
   font-weight: 700;
   font-size: 0.7rem;
 }

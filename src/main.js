@@ -1,8 +1,9 @@
 import {supaBase} from './supabase.js'
-console.log('Echo App: Checking Connetion')
 import {initChatUi} from './initChatUI.js'
 
-const socket = io('http://localhost:3001')
+const socket = io(import.meta.env.VITE_SERVER_URL ||"http://localhost:3001", {
+  transports: ['websocket', 'polling']
+})
 
 
 
@@ -23,7 +24,7 @@ async function startApp () {
 
 
 const serviceBag = {
-  getHistory: () => fetch('http://localhost:3001/history')
+  getHistory: () => fetch('https://solvek-88-shwifty-server.hf.space/history')
   .then(response => response.json())
 ,
   socket:socket

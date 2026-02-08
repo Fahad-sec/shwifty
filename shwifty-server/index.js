@@ -62,7 +62,7 @@ server.listen(PORT, () => {
 })
 
 
-app.get('history', async (req, res) => {
+app.get('/history', async (req, res) => {
      
   const {data, error} = await supaBase
    .from('messages')

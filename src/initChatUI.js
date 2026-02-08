@@ -4,7 +4,14 @@ export const initChatUi = {
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
 
-    const socket = io("http://localhost:3001");
+    const socket = io(import.meta.env.VITE_SERVER_URL ||"http://localhost:3001", {
+     
+      transport: ['websocket', 'polling']
+
+
+    });
+
+
     socket.on('receive_message', (newMessage) => {
       if (newMessage.user_id !== userId) {
         renderMessage(newMessage)

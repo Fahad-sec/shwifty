@@ -15,7 +15,14 @@ body {
   margin:0;
   overflow-x:hidden;
 }
+button {
+   transition: all 0.2 ease;
+}
 
+button:disabled {
+  filter: greyscale(0.5);
+  transform: scale(0.98);
+}
 
 .shwifty img {
   height: 100%;

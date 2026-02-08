@@ -4,8 +4,17 @@ export const initChatUi = {
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
 
+    const socket = io("http://localhost:3001");
+    socket.on('receive_message', (newMessage) => {
+      if (newMessage.user_id !== userId) {
+        renderMessage(newMessage)
+      }
+    })
 
-    const renderMessage = async (msg) => {
+
+
+
+  const renderMessage = async (msg) => {
         // time
          let rawTime = msg.created_at;
       let dateObj
@@ -27,9 +36,7 @@ export const initChatUi = {
       const msgDiv = document.createElement('div');
 
       const isMine = msg.user_id === userId ;
-      
-      
-
+  
 
       msgDiv.className = `message-item ${isMine ? 'sent' : 'received'} ` 
       msgDiv.innerHTML = `
@@ -51,18 +58,25 @@ export const initChatUi = {
       
      const sendMessage = async () => {
       const text = input.value.trim()
+
+
       if (text !== '') {
        const localMsg = {
         content: text,
         user_id: userId,
-        userName: 'Me',
+        username: undefined,
         created_at: new Date().toISOString()
        }
-       renderMessage(localMsg)
-        input.value = ""
-        await serviceBag.send(text);
 
+       socket.emit('send_message', localMsg)
+
+       renderMessage({
+        ...localMsg 
+       })
+        input.value = ""
       }
+
+
      }
     btn.addEventListener('click', sendMessage);
     input.addEventListener('keydown', (event) => {
@@ -76,23 +90,18 @@ export const initChatUi = {
            renderMessage(msg)
       })
     })
-
-    serviceBag.subscribe((newMessage) => {
-      if (newMessage.user_id !==userId) {
-        renderMessage(newMessage)
-      }
-    })
     pageReload()
 
   }
 }
 
 const pageReload = () => {
-  const shwifty = document.querySelector('.Echo');
+  const shwifty = document.querySelector('.shwifty');
 
   shwifty.addEventListener('click', () => {
     window.location.reload();
   })
 }
+
 
 

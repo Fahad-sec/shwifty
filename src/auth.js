@@ -88,7 +88,7 @@ loginBtn.addEventListener('click', async () => {
   const password = document.getElementById('password').value;
 
   loginBtn.disabled = true;
-  loginBtn.innerText = "Authentication..."
+  loginBtn.innerText = "Authenticating..."
   loginBtn.style.opacity = "0.7";
   loginBtn.style.cursor = "not-allowed";
 

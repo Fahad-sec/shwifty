@@ -1,7 +1,10 @@
 import {supaBase} from './supabase.js'
 console.log('Echo App: Checking Connetion')
 import {initChatUi} from './initChatUI.js'
-import {chatService} from './chatService.js'
+
+const socket = io('http://localhost:3001')
+
+
 
 async function startApp () {
   const {data: {session}} = await supaBase.auth.getSession();
@@ -20,21 +23,10 @@ async function startApp () {
 
 
 const serviceBag = {
-  send: (text) => chatService.send(supaBase, text, userId,  username),
-  getHistory: () => chatService.getHistory(supaBase),
-  subscribe: (callback) => {
-    const channel = supaBase
-    .channel('live-chat')
-    .on('postgres_changes', 
-      {event: 'INSERT', schema: 'public', table: 'messages'},
-      (payload) => {
-        console.log("new live msg", payload.new)
-        callback(payload.new);
-      }
-    )
-    .subscribe();
-    return channel
-  }
+  getHistory: () => fetch('http://localhost:3001/history')
+  .then(response => response.json())
+,
+  socket:socket
   
 }
 

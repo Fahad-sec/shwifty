@@ -1,5 +1,5 @@
 export const initChatUi = {
-  setup: function(serviceBag, userId)  {
+  setup: function(serviceBag, userId, username)  {
     const input = document.getElementById('messageInput')
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
@@ -17,8 +17,6 @@ export const initChatUi = {
         renderMessage(newMessage)
       }
     })
-
-
 
 
   const renderMessage = async (msg) => {
@@ -43,13 +41,15 @@ export const initChatUi = {
       const msgDiv = document.createElement('div');
 
       const isMine = msg.user_id === userId ;
+
+     
   
 
       msgDiv.className = `message-item ${isMine ? 'sent' : 'received'} ` 
       msgDiv.innerHTML = `
           <div class="message-content">
           <div class="message-info">
-            <small class="user-label">${isMine ? 'Me' : (msg.username || 'anonymous')}</small>
+            <small class="user-label">${msg.username}</small>
             <small class="timestamp">${time}</small>
             </div>
             <p class="text">${msg.content}</p>
@@ -65,13 +65,13 @@ export const initChatUi = {
       
      const sendMessage = async () => {
       const text = input.value.trim()
-
+         finalUsername = username || 'guest'
 
       if (text !== '') {
        const localMsg = {
         content: text,
         user_id: userId,
-        username: undefined,
+        username: finalUsername,
         created_at: new Date().toISOString()
        }
 
@@ -93,9 +93,12 @@ export const initChatUi = {
     })
 
     serviceBag.getHistory().then((messages) => {
+      if (Array.isArray(messages)) {
       messages.forEach((msg) => {
            renderMessage(msg)
+      
       })
+    } else {console.error('expected msgs but got:', messages)}
     })
     pageReload()
 

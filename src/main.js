@@ -21,17 +21,31 @@ async function startApp () {
 
   const userId = session.user.id;
   const username = session.user.user_metadata.display_name || 'new member'
+  console.log(username)
 
-
+// secure this url
 const serviceBag = {
-  getHistory: () => fetch('https://solvek-88-shwifty-server.hf.space/history')
-  .then(response => response.json())
+  getHistory: async () => {
+    const {data: {session}} = await supaBase.auth.getSession();
+    if (!session) {
+      console.warn('no session found yet')
+      return [];
+    }
+
+    const token = session?.access_token;
+
+    return  await fetch(`${import.meta.env.VITE_SERVER_URL}/history`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(response => response.json())
+  }
 ,
-  socket:socket
+  socket,
   
 }
 
-initChatUi.setup(serviceBag, userId)
+initChatUi.setup(serviceBag, userId, username)
 }
 
 startApp();

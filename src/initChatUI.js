@@ -6,17 +6,14 @@ export const initChatUi = {
 
     const socket = io(import.meta.env.VITE_SERVER_URL ||"http://localhost:3001", {
      
-      transport: ['websocket', 'polling']
-
-
+      transports: ['websocket', 'polling']
     });
 
 
-    socket.on('receive_message', (newMessage) => {
-      if (newMessage.user_id !== userId) {
-        renderMessage(newMessage)
-      }
-    })
+
+
+
+
 
 
   const renderMessage = async (msg) => {
@@ -41,25 +38,7 @@ export const initChatUi = {
       const msgDiv = document.createElement('div');
       const isMine = msg.user_id === userId ;
 
-      // typing indicator: 
-      const typingIndicator = document.querySelector('.typing-indicator');
-      let typingTimeout;
-      input.addEventListener('input', () => {
-        socket.emit('typing', {username: username, isTyping: true})
-        clearTimeout(typingTimeout);
 
-        typingTimeout = setTimeout(() => {
-          socket.emit('typing', {username: username, isTyping: false})
-        }, 2000);
-      });
-
-      socket.on('user_typing', (data) => {
-        if (data.isTyping) {
-          typingIndicator.innerText = `${data.username} is typing...`;
-        } else {
-          typingIndicator.innerText ='';
-        }
-      }) // ------------------------------------------------------------
 
      
   
@@ -102,9 +81,57 @@ export const initChatUi = {
        })
         input.value = ""
       }
-
-
      }
+
+               // typing indicator: 
+      const typingIndicator = document.querySelector('.typing-indicator');
+      let typingTimeout;
+      input.addEventListener('input', () => {
+        socket.emit('typing', {username: username, isTyping: true})
+        clearTimeout(typingTimeout);
+
+        typingTimeout = setTimeout(() => {
+          socket.emit('typing', {username: username, isTyping: false})
+        }, 2000);
+      });
+
+      socket.on('user_typing', (data) => {
+        if (data.isTyping) {
+          typingIndicator.innerText = `${data.username} is typing...`;
+        } else {
+          typingIndicator.innerText ='';
+        }
+      }) // ------------------------------------------------------------
+         // online count 
+
+      socket.on('user_count_update', (count) => {
+        console.log(count)
+        const countDisplay = document.getElementById  ('online-count');
+
+        if (countDisplay && count !==null) {
+          countDisplay.innerText = count;
+        }
+      })
+        
+       const register = () => {
+        socket.emit('register_user', userId)
+        socket.emit('request_count');
+       }
+
+       if (socket.connected) {
+        register()
+       } else {
+        socket.on('connect', register)
+       }
+     
+      // rendermsg socket
+          socket.on('receive_message', (newMessage) => {
+      if (newMessage.user_id !== userId) {
+        renderMessage(newMessage)
+      }
+    });
+
+
     btn.addEventListener('click', sendMessage);
     input.addEventListener('keydown', (event) => {
      if (event.key === 'Enter') {
@@ -121,6 +148,8 @@ export const initChatUi = {
     } else {console.error('expected msgs but got:', messages)}
     })
     pageReload()
+
+
 
   }
 }

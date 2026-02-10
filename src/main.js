@@ -21,7 +21,6 @@ async function startApp () {
 
   const userId = session.user.id;
   const username = session.user.user_metadata.display_name || 'new member'
-  console.log(username)
 
 // secure this url
 const serviceBag = {
@@ -44,7 +43,6 @@ const serviceBag = {
   socket,
   
 }
-
 initChatUi.setup(serviceBag, userId, username)
 }
 

@@ -3,9 +3,10 @@ const http = require('http');
 const {Server} = require('socket.io');
 const cors = require('cors');
 require('dotenv').config()
+
 const {createClient} = require('@supabase/supabase-js')
-console.log('hello')
 const supaBase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+
 
 const app = express();
 app.use(cors({

@@ -65,9 +65,10 @@ export const initChatUi = {
       
      const sendMessage = async () => {
       const text = input.value.trim()
-         finalUsername = username || 'guest'
+        const  finalUsername = username || 'guest'
 
       if (text !== '') {
+        console.log('internal check: ', finalUsername)
        const localMsg = {
         content: text,
         user_id: userId,

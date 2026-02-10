@@ -10,7 +10,7 @@ const supaBase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 
 const app = express();
 app.use(cors({
-  origin: "https://shwifty.vercel.app",
+  origin: ["https://shwifty.vercel.app", 'http:127.0.0.1:5173'],
   allowedHeaders: ["Authorization", "Content-Type"]
 }));
 
@@ -44,7 +44,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://shwifty.vercel.app",
+    origin: ["https://shwifty.vercel.app", "http://127.0.0.1:5173"],
     methods: ["GET", "POST"],
     allowedHeaders: ["Authorization", "Content-Type"]
   }
@@ -52,6 +52,11 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log('A user connected: ID:', socket.id );
+
+  socket.on('typing', (data) => {
+    console.log(data.username, 'server event')
+    socket.emit('user_typing', data);
+  })
    
   socket.on('send_message', async(data) => {
     console.log('message received:', data);
@@ -75,9 +80,6 @@ io.on('connection', (socket) => {
       ...savedMessage,
       username: data.username
     })
-
-
-
 
   });
   socket.on('disconnect', () => {

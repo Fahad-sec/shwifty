@@ -39,8 +39,27 @@ export const initChatUi = {
       })
       
       const msgDiv = document.createElement('div');
-
       const isMine = msg.user_id === userId ;
+
+      // typing indicator: 
+      const typingIndicator = document.querySelector('.typing-indicator');
+      let typingTimeout;
+      input.addEventListener('input', () => {
+        socket.emit('typing', {username: username, isTyping: true})
+        clearTimeout(typingTimeout);
+
+        typingTimeout = setTimeout(() => {
+          socket.emit('typing', {username: username, isTyping: false})
+        }, 2000);
+      });
+
+      socket.on('user_typing', (data) => {
+        if (data.isTyping) {
+          typingIndicator.innerText = `${data.username} is typing...`;
+        } else {
+          typingIndicator.innerText ='';
+        }
+      }) // ------------------------------------------------------------
 
      
   

@@ -102,9 +102,20 @@ body{
 }
 
 .input-area{
+  position:relative;
   display:flex;
   padding:15px;
   gap:10px;
+  flex-wrap:wrap;
+}
+
+.typing-indicator {
+    width:100%;
+    height:1.2rem;
+    font-size:0.8rem;
+    color:#00ff88;
+    font-style:italic;
+    padding-left:10px;
 }
 
 #messageInput{

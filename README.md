@@ -1,5 +1,6 @@
 # Shwifty
 - A Messaging chat Web-Application featuring a public chat using WebSockets to enable real-time messaging.
+- [Shwifty Demo](./poc/Shwifty-POC-GIF.gif)
 
 ## Key Techincal Achievements
 ### Real-Time Event Architecture

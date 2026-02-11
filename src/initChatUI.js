@@ -9,16 +9,9 @@ export const initChatUi = {
       transports: ['websocket', 'polling']
     });
 
-
-
-
-
-
-
-
   const renderMessage = async (msg) => {
         // time
-         let rawTime = msg.created_at;
+       let rawTime = msg.created_at;
       let dateObj
       if (rawTime) {
       const utcString = rawTime.endsWith('Z') || rawTime.includes('+')
@@ -36,18 +29,14 @@ export const initChatUi = {
       })
       
       const msgDiv = document.createElement('div');
-      const isMine = msg.user_id === userId ;
-
-
-
-     
-  
+      const isMine = msg.user_id === userId;
+      const finalUsername = isMine? 'Me' : `${msg.username}`;
 
       msgDiv.className = `message-item ${isMine ? 'sent' : 'received'} ` 
       msgDiv.innerHTML = `
           <div class="message-content">
           <div class="message-info">
-            <small class="user-label">${msg.username}</small>
+            <small class="user-label">${finalUsername}</small>
             <small class="timestamp">${time}</small>
             </div>
             <p class="text">${msg.content}</p>
@@ -61,12 +50,11 @@ export const initChatUi = {
     }
 
       
-     const sendMessage = async () => {
+     const sendMessage =  () => {
       const text = input.value.trim()
         const  finalUsername = username || 'guest'
 
       if (text !== '') {
-        console.log('internal check: ', finalUsername)
        const localMsg = {
         content: text,
         user_id: userId,
@@ -83,7 +71,7 @@ export const initChatUi = {
       }
      }
 
-               // typing indicator: 
+     // typing indicator: 
       const typingIndicator = document.querySelector('.typing-indicator');
       let typingTimeout;
       input.addEventListener('input', () => {
@@ -105,8 +93,7 @@ export const initChatUi = {
          // online count 
 
       socket.on('user_count_update', (count) => {
-        console.log(count)
-        const countDisplay = document.getElementById  ('online-count');
+        const countDisplay = document.getElementById('online-count');
 
         if (countDisplay && count !==null) {
           countDisplay.innerText = count;
@@ -125,7 +112,8 @@ export const initChatUi = {
        }
      
       // rendermsg socket
-          socket.on('receive_message', (newMessage) => {
+
+         socket.on('receive_message', (newMessage) => {
       if (newMessage.user_id !== userId) {
         renderMessage(newMessage)
       }
@@ -148,8 +136,6 @@ export const initChatUi = {
     } else {console.error('expected msgs but got:', messages)}
     })
     pageReload()
-
-
 
   }
 }

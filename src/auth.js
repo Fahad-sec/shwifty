@@ -77,9 +77,9 @@ logoutBtn.addEventListener('click', async () =>{
     console.log('logout cancelled')
   }
 
-
-})
+  })
  }
+ 
 
 if (loginBtn && signupBtn) {
 

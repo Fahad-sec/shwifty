@@ -11,23 +11,16 @@ async function startApp () {
   const {data: {session}} = await supaBase.auth.getSession();
   
    if (!session) {
-    console.log('no session found, redirecting');
-    window.location.href = './index.html';
     return
    }
-
-  console.log('authenticated as', session.user.user_metadata.display_name)
-
 
   const userId = session.user.id;
   const username = session.user.user_metadata.display_name || 'new member'
 
-// secure this url
 const serviceBag = {
   getHistory: async () => {
     const {data: {session}} = await supaBase.auth.getSession();
     if (!session) {
-      console.warn('no session found yet')
       return [];
     }
 

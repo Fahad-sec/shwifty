@@ -18,14 +18,11 @@
 - Added a typing indicator using webSockets allowing user's to see if another user is currenty typing and their name while the online count on top of the screen allows user's to see if any other person beside them is online in the Application.
 
 ## Tech Stack
-**Frontend**
-- HTML5, CSS3, Vanilla JavaScript.
-**Backend**
-- Node.js, Express, Socket.io.
-**DataBase & Auth**
-- Supabase's PostgreSQL & Authentication.
-**Deployment**
-- Git, Github, Vercel for the Client and Hugging Face for server.
+
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript.
+- **Backend**: Node.js, Express, Socket.io.
+- **DataBase & Auth**: Supabase's PostgreSQL & Authentication.
+- **Deployment**: Git, Github, Vercel for the Client and Hugging Face for server.
 
 ## Project Evolution
 - **V1** Started with the UI and Supabase fetching messages everytime a user sends a message and saving it to storage.

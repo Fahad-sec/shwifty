@@ -3,7 +3,38 @@ export const initChatUi = {
     const input = document.getElementById('messageInput')
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
+    const notifyBtn = document.querySelector('.notification-btn')
+    
+    const initNotifications = async () => {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          notifyBtn.innerText = 'Notify On'
+          notifyBtn.style.backgroundColor = 'green'
+          notifyBtn.disabled = true
+          new Notification('Shwifty', {body: "Notifications enabled"})
+        } 
+    }    
+    if (notifyBtn) {
+       notifyBtn.addEventListener('click', initNotifications)
+      }
+      
+      const checkNotifications = () => {
+        const permission = Notification.permission
+        if (permission === 'granted') {
+          
+          notifyBtn.innerText = 'Notify On'
+          notifyBtn.style.backgroundColor = 'green'
+          notifyBtn.disabled = true
+        } else {
+          notifyBtn.innerText = 'Enable Notifications'
+          notifyBtn.backgroundColor = ''
+          notifyBtn.disabled = false
+        }
+      }
+      checkNotifications()
 
+
+     
     const socket = io(import.meta.env.VITE_SERVER_URL ||"http://localhost:3001", {
      
       transports: ['websocket', 'polling']
@@ -116,6 +147,14 @@ export const initChatUi = {
          socket.on('receive_message', (newMessage) => {
       if (newMessage.user_id !== userId) {
         renderMessage(newMessage)
+
+        if ( !document.hasFocus() && Notification.permission === 'granted') {
+
+          new Notification(`New message from ${newMessage.username}`, {
+            body: newMessage.content,
+            tag: 'chat-msg'
+          })
+        }
       }
     });
 

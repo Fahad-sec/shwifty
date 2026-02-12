@@ -152,7 +152,7 @@ export const initChatUi = {
 
           new Notification(`New message from ${newMessage.username}`, {
             body: newMessage.content,
-            tag: 'chat-msg'
+            tag: Date.now()
           })
         }
       }

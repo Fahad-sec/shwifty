@@ -1,5 +1,7 @@
 # Shwifty
+[![Vercel](https://img.shields.io/badge/Live_Demo-Shwifty-brightgreen?style=for-the-badge&logo=vercel)](https://shwifty.vercel.app)
 - A Messaging chat Web-Application featuring a public chat using WebSockets to enable real-time messaging.
+![Shwifty Demo](./poc/Shwifty-POC-GIF.gif)
 
 ## Key Techincal Achievements
 ### Real-Time Event Architecture

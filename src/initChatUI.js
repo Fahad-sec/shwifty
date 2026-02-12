@@ -161,6 +161,7 @@ export const initChatUi = {
 
           new Notification(`New message from ${newMessage.username}`, {
             body: newMessage.content,
+            icon: './images/page-logo.png' ,
             tag: Date.now()
           })
         }

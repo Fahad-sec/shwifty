@@ -24,6 +24,8 @@ body{
   overflow-x:hidden;
 }
 
+
+
 /*.header::after {
   content: '';
   width: 10vh;
@@ -140,6 +142,17 @@ body{
   
 }
 
+#username{
+  width:fit-content;
+  margin-bottom:2px;
+  padding:5px 10px;
+  border: solid 1px #ff2f2f;
+  background-color:#0e0e0e;
+  border-radius:5px;
+  color:aliceblue;
+  cursor:pointer;
+  box-shadow: 0px 5px 15px black
+}
 .notify-header {
   display:flex;
   margin-left: auto;
@@ -147,7 +160,7 @@ body{
   width:95%;
   margin-top:5px;
   display:flex;
-  flex-direction:column;
+  justify-content:space-between;
   gap:10px;
 }
 .notification-btn {

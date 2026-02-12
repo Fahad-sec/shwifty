@@ -4,6 +4,15 @@ export const initChatUi = {
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
     const notifyBtn = document.querySelector('.notification-btn')
+    const notifyHeader = document.querySelector('.notify-header');
+
+    const displayName = () => {
+      const nameElement = document.getElementById('username')
+       nameElement.innerText = `Hey! ${username}`
+      notifyHeader.appendChild(nameElement)
+    
+    }
+    displayName()
     
     const initNotifications = async () => {
         const permission = await Notification.requestPermission();

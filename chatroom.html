@@ -13,12 +13,18 @@
    <div class="header">
       <button id="logout-btn">Logout</button>
       <p class="shwifty"><img src="./images/page-logo.png"></p>
-      <div class="stats">Online: <span id="online-count">0</span></div>
+      <div class="stats">Online: <span id="online-count">0</span>
+        , Users
+      <button id="online-btn">&#65086;</button>
+      <div id="stats-window" class="users-window users-show">
+      </div>
+      </div>
     </div>
     
     <div class="notify-header">
     <button class="notification-btn">Enable Notifications 
     </button>
+    <div id="chat-title">Global Lobby</div>
     <div id="username"></div>
     </div>
     <div class="chat-window" id="chat-window">

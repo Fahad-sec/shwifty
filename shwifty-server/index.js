@@ -2,7 +2,6 @@ const express = require('express');
 const http = require('http');
 const {Server} = require('socket.io');
 const cors = require('cors');
-require('dotenv').config()
 
 const {createClient} = require('@supabase/supabase-js')
 const supaBase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
@@ -10,7 +9,7 @@ const supaBase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 
 const app = express();
 app.use(cors({
-  origin: ["https://shwifty.vercel.app", 'http:127.0.0.1:5173'],
+  origin: ["https://shwifty.vercel.app", 'http://127.0.0.1:5173'],
   allowedHeaders: ["Authorization", "Content-Type"]
 }));
 
@@ -25,7 +24,7 @@ app.get('/history', async (req, res) => {
   const {data: {user}, error: authError} = await supaBase.auth.getUser(token);
 
   if (authError || !user) {
-    console.error('Auth error'. authError?.message)
+    console.error('Auth error', authError?.message)
     return res.status(401).json({error: "Invalid token"});
   }
 
@@ -50,17 +49,42 @@ const io = new Server(server, {
   }
 });
 
+const activeUsers = new Map();
 io.on('connection', (socket) => {
   console.log('A user connected: ID:', socket.id );
 
+    socket.on('join_private_chat', (roomId) => {
+      const currentRooms = Array.from(socket.rooms);
+      currentRooms.forEach(room => {
+        if (room !== socket.id) socket.leave(room);
+      });
+      socket.join(roomId);
+      console.log(`User joined room: ${roomId}`);
+    })
+
+  
+  
+  
+  socket.on('register_user', (userId) => {
+     activeUsers.set(socket.id, userId);
+    broadcastUniqueCount();
+  })
+
+  const broadcastUniqueCount = () => {
+    const uniqueUserCount = new Set(activeUsers.values()).size;
+    io.emit('user_count_update', uniqueUserCount)
+  }
+
+  socket.on('request_count', () => {
+    const uniqueUserCount = new Set(activeUsers.values()).size;
+    socket.emit('user_count_update', uniqueUserCount > 0 ? uniqueUserCount: 1);
+  })
+  
   socket.on('typing', (data) => {
-    console.log(data.username, 'server event')
-    socket.emit('user_typing', data);
+    socket.broadcast.emit('user_typing', data);
   })
    
-  socket.on('send_message', async(data) => {
-    console.log('message received:', data);
-      
+  socket.on('send_message', async(data) => {      
     const {data: savedMessage, error,} = await supaBase
     .from('messages')
     .insert([{
@@ -83,6 +107,8 @@ io.on('connection', (socket) => {
 
   });
   socket.on('disconnect', () => {
+    activeUsers.delete(socket.id)
+    broadcastUniqueCount();
     console.log('User disconnected');
   });
 });

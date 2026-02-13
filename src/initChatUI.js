@@ -1,11 +1,15 @@
 export const initChatUi = {
+  
   setup: function(serviceBag, userId, username)  {
+      let currentActiveRoom = 'global'
+
     const input = document.getElementById('messageInput')
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
     const notifyBtn = document.querySelector('.notification-btn')
     const notifyHeader = document.querySelector('.notify-header');
-
+    const onlineBtn = document.getElementById('online-btn');
+    const chatTitle = document.getElementById('chat-title')
     const displayName = () => {
       const nameElement = document.getElementById('username')
        nameElement.innerText = `Hey! ${username}`
@@ -99,6 +103,7 @@ export const initChatUi = {
         content: text,
         user_id: userId,
         username: finalUsername,
+        room_id: currentActiveRoom,
         created_at: new Date().toISOString()
        }
 
@@ -152,9 +157,21 @@ export const initChatUi = {
        }
      
       // rendermsg socket
+         
+      const fetchRoomHistory = async (roomId) => {
+         const messages = await serviceBag.getHistory(roomId)
+         chatWindow.innerHTML = ''
+
+         if (Array.isArray(messages)) {
+          messages.forEach(msg => renderMessage(msg))
+         }
+      }
 
          socket.on('receive_message', (newMessage) => {
-      if (newMessage.user_id !== userId) {
+          if (newMessage.user_id === userId) {
+            return
+          }
+      if (newMessage.room_id === currentActiveRoom) {
         renderMessage(newMessage)
 
         if ( !document.hasFocus() && Notification.permission === 'granted') {
@@ -166,8 +183,67 @@ export const initChatUi = {
           })
         }
       }
-    });
+    }); 
+           
+           const initUserList = () => {
+            serviceBag.loadOnlineUsers((clickedUser) => {
+              switchPrivateChat(clickedUser)
+              toggleUserList()
+            });
+           };
+            
+            initUserList();
 
+
+        const toggleUserList = () => {
+         if (onlineBtn.innerText === '︽') {
+        onlineBtn.innerHTML = '︾'
+      } else {
+        onlineBtn.innerHTML = '︽'
+      }
+     const usersWindow =   document.querySelector('.users-window')
+     usersWindow.classList.toggle('users-show');
+             
+     if (usersWindow.classList.contains('users-show')) {
+      serviceBag.loadOnlineUsers((clickedUser) => {
+        switchPrivateChat(clickedUser);
+
+      })
+     }
+     }
+
+    
+     if (chatTitle) {
+      chatTitle.addEventListener('click', () => {
+        if (currentActiveRoom !== 'global') {
+          currentActiveRoom = 'global';
+          chatTitle.innerText ='Global Lobby';
+          socket.emit('join_private_chat', 'global');
+          fetchRoomHistory('global')
+        }
+      })
+     }
+
+
+    const switchPrivateChat = (clickedUser) => {
+      const roomId = [userId, clickedUser.id].sort().join('_');
+      currentActiveRoom = `private_${roomId}`
+        
+       if (chatTitle) {
+       chatTitle.innerText = `chatting with ${clickedUser.username}`
+        
+       }
+
+      socket.emit('join_private_chat', currentActiveRoom);
+      fetchRoomHistory(currentActiveRoom);
+      
+    } 
+
+    
+     
+    onlineBtn.addEventListener('click', () => {
+        toggleUserList()
+    });
 
     btn.addEventListener('click', sendMessage);
     input.addEventListener('keydown', (event) => {
@@ -196,6 +272,4 @@ const pageReload = () => {
     window.location.reload();
   })
 }
-
-
 

@@ -31,7 +31,7 @@ body{
   justify-content:space-between;
   padding:10px 20px;
   position:relative;
-  width:95%;
+  width:100%;
 }
 .shwifty img {
   height: 100%;
@@ -39,7 +39,7 @@ body{
 }
 .shwifty{
   display: flex;
-  height: 8vh;
+  height: 7vh;
   font-size:4vh;
   color:#ff2f2f;
   border: solid 1px #ff2f2f;
@@ -50,7 +50,7 @@ body{
 
 }
 #logout-btn {
-  padding:10px 20px;
+  padding:3px 25px;
   border: solid 1px #ff2f2f;
   background-color:#0e0e0e;
   border-radius:10px;
@@ -138,7 +138,7 @@ body{
 #username{
   width:fit-content;
   margin-bottom:2px;
-  padding:5px 10px;
+  padding:5px 18px;
   border: solid 1px #ff2f2f;
   background-color:#0e0e0e;
   border-radius:5px;
@@ -157,6 +157,7 @@ body{
   gap:10px;
 }
 .notification-btn {
+  margin-right:2vh;
   width:fit-content;
   margin-bottom:2px;
   padding:5px 10px;
@@ -211,20 +212,28 @@ body{
 }
 .stats {
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: small;
   color: #fff;
-  display: flex;
   gap: 5px; 
+  
+  padding: 5px;
+  position:relative;
+  display:inline-block;
+  border:1px solid red;
+  border-radius:7%;
 }
 
 
 #online-btn {
   background-color:#000;
   color:aliceblue;
-  font-weight:bold;
+  font-size:x-small;
   cursor:pointer;
   padding: 1px 3px;
-  height:max-content;
+  height:fit-content;
+  width:fit-content;
+
+
 }
 
 #online-count {
@@ -237,7 +246,7 @@ body{
   position:absolute;
   height:max-content;
   background:#000;
-  border:1px solid #ff2f2f;
+  
   top:100%;
   left:0;
   right:0;
@@ -260,8 +269,8 @@ body{
 .user-entry {
   cursor:pointer;
   border: 1px solid green;
-  padding: 2px;
-  margin-bottom:5px;
+  padding: 4px;
+  margin-bottom:8px;
 }
 #chat-title {
   width:fit-content;
@@ -270,7 +279,7 @@ body{
   border-radius: 5px;
   color: aliceblue;
   cursor:pointer;
-  padding: 5px 10px;
+  padding: 6px 18px;
   font-size: 0.9rem;
   text-transform:capitalize;
   box-shadow: 0px 5px 15px black;
@@ -282,29 +291,42 @@ body{
 .users-show {
   display: inline-block;
 }
-.stats{
-  padding: 5px;
-  position:relative;
-  display:inline-block;
-  border:1px solid red
-}
 
 @media (max-width: 600px) {
+
+  #username {
+    margin-right:0;
+    padding: 3px 6px;
+    font-size:x-small;
+  }
   body{
     margin:0;
+    padding:2px;
+  }
+
+  .notify-header {
+
+    width:100%;
+    padding:0;
+    margin-top:2px;
+    margin-left:0;
+    margin-right:0;
   }
 
   .stats {
-    font-size: x-small;
+    font-size:xx-small;
   }
   .shwifty {
-    width: fit-content
+    width: max-content;
+    height:50px;
+    margin-right:1vh
   }
   .notification-btn {
     font-size:x-small;
+    margin-right:0;
   }
-  #chat-title, #username {
-      padding: 4px 8px;
+  #chat-title {
+      padding: 6px 12px;
       font-size:x-small;
   }
   .chat-window {
@@ -315,7 +337,10 @@ body{
 
   #logout-btn {
     font-size:x-small;
-    padding: 4px 8px
+    padding: 6px 8px;
+    height:fit-content;
+    margin-right:5svh
+
   }
 
   input, button {
@@ -329,7 +354,8 @@ body{
 
   .header {
     width: 100%;
-    padding: 7px 3px;
+    padding: 7px 2px;
+    margin:0;
     box-sizing:border-box
   }
   .header > * {

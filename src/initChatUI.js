@@ -39,7 +39,7 @@ export const initChatUi = {
           notifyBtn.style.backgroundColor = 'green'
           notifyBtn.disabled = true
         } else {
-          notifyBtn.innerText = 'Enable Notifications'
+          notifyBtn.innerText = 'Notify-OFF'
           notifyBtn.backgroundColor = ''
           notifyBtn.disabled = false
         }
@@ -230,6 +230,7 @@ export const initChatUi = {
     const switchPrivateChat = (clickedUser) => {
       const roomId = [userId, clickedUser.id].sort().join('_');
       currentActiveRoom = `private_${roomId}`
+      toggleUserList()
         
        if (chatTitle) {
        chatTitle.innerText = `chatting with ${clickedUser.username}`

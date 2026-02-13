@@ -122,7 +122,7 @@ signupBtn.addEventListener('click', async() => {
     email: email,
     password: password,
     options: {
-      data: {username: username}
+      data: {username: username, display_name: username}
     }
   });
 

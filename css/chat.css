@@ -240,7 +240,13 @@ body{
   border:1px solid #ff2f2f;
   top:100%;
   left:0;
-  right:0
+  right:0;
+  max-height:30vh;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin-top:5px;
+  overflow-y: auto;
 
 }
 .users-window {
@@ -248,6 +254,9 @@ body{
 }
 .user-entry {
   cursor:pointer;
+  border: 1px solid green;
+  padding: 2px;
+  margin-bottom:5px;
 }
 #chat-title {
   width:fit-content;

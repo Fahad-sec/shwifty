@@ -196,13 +196,15 @@ export const initChatUi = {
 
 
         const toggleUserList = () => {
+        const usersWindow =   document.querySelector('.users-window')
+        usersWindow.classList.toggle('users-show');
+        
          if (onlineBtn.innerText === '︽') {
+
         onlineBtn.innerHTML = '︾'
       } else {
         onlineBtn.innerHTML = '︽'
       }
-     const usersWindow =   document.querySelector('.users-window')
-     usersWindow.classList.toggle('users-show');
              
      if (usersWindow.classList.contains('users-show')) {
       serviceBag.loadOnlineUsers((clickedUser) => {

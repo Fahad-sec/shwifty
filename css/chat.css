@@ -221,19 +221,28 @@ body{
   display:inline-block;
   border:1px solid red;
   border-radius:7%;
+
 }
 
 
 #online-btn {
-  background-color:#000;
+  background-color: #ff2f2f;
+  border:none;
   color:aliceblue;
   font-size:x-small;
+  font-weight:bold;
   cursor:pointer;
   padding: 1px 3px;
   height:fit-content;
   width:fit-content;
-
-
+  box-shadow: 0 0 10px rgba(255, 47, 47, 0.6);
+  transition: all 0.3s ease;
+  animation: attention-pulse 2s infinite;
+}
+@keyframes attention-pulse {
+  0% { box-shadow: 0 0 0 0px rgba(255, 47, 47, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 47, 47, 0); }
+  100% { box-shadow: 0 0 0 0px rgba(255, 47, 47, 0); }
 }
 
 #online-count {

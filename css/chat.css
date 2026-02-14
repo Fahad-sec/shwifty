@@ -352,7 +352,7 @@ body{
 
   #username {
     margin-right:0;
-    padding: 3px 6px;
+    padding: 5px 3px;
     font-size:x-small;
   }
   body{
@@ -361,7 +361,8 @@ body{
   }
 
   .notify-header {
-
+     display:flex;
+     flex:1;
     width:100%;
     padding:0;
     margin-top:2px;
@@ -374,15 +375,16 @@ body{
   }
   .shwifty {
     width: max-content;
-    height:50px;
-    margin-right:1vh
+    height:30px;
+    margin:auto
   }
   .notification-btn {
     font-size:x-small;
     margin-right:0;
+    padding:5px 9px;
   }
   #chat-title {
-      padding: 6px 12px;
+      padding: 5px 20px;
       font-size:x-small;
   }
   .chat-window {

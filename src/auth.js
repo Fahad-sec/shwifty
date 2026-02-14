@@ -28,6 +28,19 @@ const loginBtn = document.getElementById('login-btn');
 const logoutBtn = document.getElementById('logout-btn')
 const authToggle = document.getElementById('auth-toggle')
 const userName = document.getElementById('username')
+const loader  = document.getElementById('loading-screen')
+
+    
+    const toggleLoader = (show) => {
+      if (!loader) return ;
+      if (show) {
+        loader.style.display = 'flex';
+        loader.classList.remove( 'loader-hidden')
+      } else {
+        loader.classList.add('loader-hidden')
+        setTimeout(() => loader.style.display = 'none', 500)
+      }
+    }
 
 authToggle?.addEventListener('click', () => {
   isLoginMode = !isLoginMode;
@@ -46,23 +59,20 @@ authToggle?.addEventListener('click', () => {
 })
 
 
-
-
-
-
  if (logoutBtn) {
 logoutBtn.addEventListener('click', async () =>{
-
   const confirmed = confirm("Are you sure you want to logout?")
   if (confirmed) {
-
+     toggleLoader(true)
   logoutBtn.disabled = true;
   logoutBtn.innerText = "Logging Out..."
   logoutBtn.style.opacity = "0.7";
   logoutBtn.style.cursor = "not-allowed";
    
    const {error} = await supaBase.auth.signOut();
+   toggleLoader(false)
   if (error) {
+    toggleLoader(false)
       logoutBtn.disabled = false;
       logoutBtn.innerText = "Logout"
       logoutBtn.style.opacity = "1";
@@ -84,6 +94,8 @@ logoutBtn.addEventListener('click', async () =>{
 if (loginBtn && signupBtn) {
 
 loginBtn.addEventListener('click', async () => {
+  toggleLoader(true);
+
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
 
@@ -96,7 +108,10 @@ loginBtn.addEventListener('click', async () => {
     email,
     password
   });
+
+  toggleLoader(false)
   if (error) {
+    toggleLoader(false)
   loginBtn.disabled = false;
   loginBtn.innerText = "Login"
   loginBtn.style.opacity = "1";
@@ -108,6 +123,8 @@ loginBtn.addEventListener('click', async () => {
 })
 
 signupBtn.addEventListener('click', async() => {
+  toggleLoader(true)
+
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const username = document.getElementById('username').value;
@@ -125,8 +142,9 @@ signupBtn.addEventListener('click', async() => {
       data: {username: username, display_name: username}
     }
   });
-
+   toggleLoader(false)
   if (error) {
+    toggleLoader(false)
       signupBtn.disabled = false;
       signupBtn.innerText = "Sign up"
       signupBtn.style.opacity = "1";

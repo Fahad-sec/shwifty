@@ -10,6 +10,21 @@ export const initChatUi = {
     const notifyHeader = document.querySelector('.notify-header');
     const onlineBtn = document.getElementById('online-btn');
     const chatTitle = document.getElementById('chat-title')
+    const loader  = document.getElementById('loading-screen')
+
+    
+    const toggleLoader = (show) => {
+      if (!loader) return ;
+      if (show) {
+        loader.style.display = 'flex';
+        loader.classList.remove( 'loader-hidden')
+      } else {
+        loader.classList.add('loader-hidden')
+        setTimeout(() => loader.style.display = 'none', 500)
+      }
+    }
+
+
     const displayName = () => {
       const nameElement = document.getElementById('username')
        nameElement.innerText = `Hey! ${username}`
@@ -141,7 +156,7 @@ export const initChatUi = {
         const countDisplay = document.getElementById('online-count');
 
         if (countDisplay && count !==null) {
-          countDisplay.innerText = count;
+          countDisplay.innerText = count ;
         }
       })
         
@@ -216,30 +231,34 @@ export const initChatUi = {
 
     
      if (chatTitle) {
-      chatTitle.addEventListener('click', () => {
+      chatTitle.addEventListener('click', async () => {
         if (currentActiveRoom !== 'global') {
+          toggleLoader(true)
           currentActiveRoom = 'global';
           chatTitle.innerText ='Global Lobby';
           socket.emit('join_private_chat', 'global');
-          fetchRoomHistory('global')
+          await fetchRoomHistory('global');
+          toggleLoader(false)
         }
       })
      }
 
 
-    const switchPrivateChat = (clickedUser) => {
+    const switchPrivateChat = async (clickedUser) => {
+      toggleLoader(true);
       const roomId = [userId, clickedUser.id].sort().join('_');
       currentActiveRoom = `private_${roomId}`
       toggleUserList()
-        
-       if (chatTitle) {
-       chatTitle.innerText = `chatting with ${clickedUser.username}`
-        
-       }
 
       socket.emit('join_private_chat', currentActiveRoom);
-      fetchRoomHistory(currentActiveRoom);
-      
+      await fetchRoomHistory(currentActiveRoom);
+      if (chatTitle) {
+       chatTitle.innerText = `chatting with ${clickedUser.username}`
+       }
+       
+       toggleLoader(false)
+       
+       
     } 
 
     
@@ -259,9 +278,12 @@ export const initChatUi = {
       if (Array.isArray(messages)) {
       messages.forEach((msg) => {
            renderMessage(msg)
-      
-      })
-    } else {console.error('expected msgs but got:', messages)}
+      });
+    } 
+    toggleLoader(false)
+    }).catch(err => {
+      console.error(err);
+      toggleLoader(false)
     })
     pageReload()
 

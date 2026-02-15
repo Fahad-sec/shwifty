@@ -33,20 +33,16 @@ body{
   position:relative;
   width:100%;
 }
-.shwifty img {
-  height: 100%;
-  width: fit-content;
-}
 .shwifty{
   display: flex;
-  height: 7vh;
-  font-size:4vh;
+  height: 4.5vh;
+  font-size:3vh;
   color:#ff2f2f;
   border: solid 1px #ff2f2f;
-  padding:5px;
+  padding: 2px 18px;
   border-radius:10px;
   cursor: pointer;
-  box-shadow: 0px 5px 15px black
+    box-shadow:0px 0px 0px 2px red;
 
 }
 #logout-btn {
@@ -374,9 +370,12 @@ body{
     font-size:xx-small;
   }
   .shwifty {
+    padding:3px 7px;
+    font-size:small;
     width: max-content;
-    height:30px;
-    margin:auto
+    height:fit-content;
+    margin:auto;
+    box-shadow:0px 0px 0px 1px red;
   }
   .notification-btn {
     font-size:x-small;

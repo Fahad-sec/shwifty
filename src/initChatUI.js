@@ -27,7 +27,7 @@ export const initChatUi = {
 
     const displayName = () => {
       const nameElement = document.getElementById('username')
-       nameElement.innerText = `Hey! ${username}`
+       nameElement.innerText = `${username}`
       notifyHeader.appendChild(nameElement)
     
     }

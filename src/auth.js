@@ -1,20 +1,39 @@
 import {supaBase} from './supabase.js'
 
+const loader  = document.getElementById('loading-screen')
+const loadingMsg = document.querySelector('.loading-msg')
+    
+    const toggleLoader = (show, msg) => {
+      if (!loader) return ;
+      if (show) {
+        loadingMsg.innerText = msg
+        loader.style.display = 'flex';
+        loader.classList.remove( 'loader-hidden')
+      } else {
+        loader.classList.add('loader-hidden')
+        setTimeout(() => loader.style.display = 'none', 500)
+      }
+    }
 
- supaBase.auth.onAuthStateChange((event, session) => {
+
+   supaBase.auth.onAuthStateChange((event, session) => {
      const path = window.location.pathname
     const isChatPage = path.includes('chatroom.html');
     const isLoginPage = path.includes('index.html') || path.endsWith('/')
 
     if (session) {
+
       document.body.style.display = 'flex'
       if (isLoginPage) {
+
         console.log('user is logged in ', session.user)
         window.location.href = "chatroom.html";
       } 
     } else {
       document.body.style.display = 'flex'
       console.log('no active session')
+      toggleLoader(false)
+
       if (isChatPage) {
         window.location.href = 'index.html';
       } 
@@ -28,19 +47,9 @@ const loginBtn = document.getElementById('login-btn');
 const logoutBtn = document.getElementById('logout-btn')
 const authToggle = document.getElementById('auth-toggle')
 const userName = document.getElementById('username')
-const loader  = document.getElementById('loading-screen')
 
-    
-    const toggleLoader = (show) => {
-      if (!loader) return ;
-      if (show) {
-        loader.style.display = 'flex';
-        loader.classList.remove( 'loader-hidden')
-      } else {
-        loader.classList.add('loader-hidden')
-        setTimeout(() => loader.style.display = 'none', 500)
-      }
-    }
+
+
 
 authToggle?.addEventListener('click', () => {
   isLoginMode = !isLoginMode;
@@ -63,9 +72,8 @@ authToggle?.addEventListener('click', () => {
 logoutBtn.addEventListener('click', async () =>{
   const confirmed = confirm("Are you sure you want to logout?")
   if (confirmed) {
-     toggleLoader(true)
+     toggleLoader(true, 'See you soon!')
   logoutBtn.disabled = true;
-  logoutBtn.innerText = "Logging Out..."
   logoutBtn.style.opacity = "0.7";
   logoutBtn.style.cursor = "not-allowed";
    
@@ -74,7 +82,6 @@ logoutBtn.addEventListener('click', async () =>{
   if (error) {
     toggleLoader(false)
       logoutBtn.disabled = false;
-      logoutBtn.innerText = "Logout"
       logoutBtn.style.opacity = "1";
       logoutBtn.style.cursor = "pointer";
     console.error("logout error: ", error)
@@ -94,7 +101,7 @@ logoutBtn.addEventListener('click', async () =>{
 if (loginBtn && signupBtn) {
 
 loginBtn.addEventListener('click', async () => {
-  toggleLoader(true);
+  toggleLoader(true, 'Verifying your account...' );
 
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
@@ -123,7 +130,7 @@ loginBtn.addEventListener('click', async () => {
 })
 
 signupBtn.addEventListener('click', async() => {
-  toggleLoader(true)
+  toggleLoader(true, 'Creating you account...' )
 
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;

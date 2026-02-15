@@ -353,7 +353,6 @@ body{
   display: inline-block;
 }
 
-/* LODING OVERLAY*/
 
 .loading-overlay {
   position: fixed;
@@ -386,6 +385,10 @@ body{
   border-radius: 50%;
   margin: 0 auto 15px;
   animation: spin 1s linear infinite;
+}
+
+.loading-msg {
+  color:#ff2f2f;
 }
 @keyframes spin {
   0% {transform: rotate(0deg);}

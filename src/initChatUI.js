@@ -11,11 +11,13 @@ export const initChatUi = {
     const onlineBtn = document.getElementById('online-btn');
     const chatTitle = document.getElementById('chat-title')
     const loader  = document.getElementById('loading-screen')
-
+    const loadingMsg = document.querySelector('.loading-msg')
     
-    const toggleLoader = (show) => {
+    const toggleLoader = (show, msg) => {
       if (!loader) return ;
       if (show) {
+        console.log(msg)
+        loadingMsg.innerText = msg
         loader.style.display = 'flex';
         loader.classList.remove( 'loader-hidden')
       } else {
@@ -233,7 +235,8 @@ export const initChatUi = {
      if (chatTitle) {
       chatTitle.addEventListener('click', async () => {
         if (currentActiveRoom !== 'global') {
-          toggleLoader(true)
+          
+          toggleLoader(true, 'Back To Lobby')
           currentActiveRoom = 'global';
           chatTitle.innerText ='Global Lobby';
           socket.emit('join_private_chat', 'global');
@@ -245,7 +248,8 @@ export const initChatUi = {
 
 
     const switchPrivateChat = async (clickedUser) => {
-      toggleLoader(true);
+      const msg = `Chatting with ${clickedUser.username}`
+      toggleLoader(true, msg);
       const roomId = [userId, clickedUser.id].sort().join('_');
       currentActiveRoom = `private_${roomId}`
       toggleUserList()
@@ -283,7 +287,7 @@ export const initChatUi = {
     toggleLoader(false)
     }).catch(err => {
       console.error(err);
-      toggleLoader(false)
+      toggleLoader(true, err)
     })
     pageReload()
 

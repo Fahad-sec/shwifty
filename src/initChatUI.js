@@ -71,9 +71,24 @@ export const initChatUi = {
      
       transports: ['websocket', 'polling']
     });
-     
+           const showEmptyState = (partnerName) => {
+        const emptyDiv  = document.createElement('div');
+        emptyDiv.className = 'empty-chat-placeholder'
+
+        emptyDiv.innerHTML = `
+
+            <div class="placeholder-icon">🔒</div>
+            <p>Start a conversation with <b>${partnerName}</b>
+            <small>Messages are secure and private.</small>
+        `
+        chatWindow.appendChild(emptyDiv)
+
+      }
     let lastRenderDate = null;
   const renderMessage = async (msg) => {
+
+    const placeHolder = document.querySelector('.empty-chat-placeholder')
+    if (placeHolder) placeHolder.remove();
         // time
        const msgDate = new Date(msg.created_at).toDateString();
 
@@ -102,6 +117,9 @@ export const initChatUi = {
         minute: '2-digit',
         hour12: true
       })
+
+      //NEW chat: 
+
       
       const msgDiv = document.createElement('div');
       const isMine = msg.user_id === userId;
@@ -151,7 +169,7 @@ export const initChatUi = {
       const typingIndicator = document.querySelector('.typing-indicator');
       let typingTimeout;
       input.addEventListener('input', () => {
-        socket.emit('typing', {username: username, isTyping: true})
+        socket.emit('typing', {username: username, isTyping: true, room_id: currentActiveRoom})
         clearTimeout(typingTimeout);
 
         typingTimeout = setTimeout(() => {
@@ -186,16 +204,23 @@ export const initChatUi = {
        } else {
         socket.on('connect', register)
        }
-     
+       
+      
       // rendermsg socket
          
-      const fetchRoomHistory = async (roomId) => {
-         const messages = await serviceBag.getHistory(roomId)
-         chatWindow.innerHTML = ''
+      const fetchRoomHistory = async (roomId, partnerName) => {
 
-         if (Array.isArray(messages)) {
+        chatWindow.innerHTML = ''
+
+        lastRenderDate = null;
+         const messages = await serviceBag.getHistory(roomId)
+
+         if (Array.isArray(messages) && messages.length > 0) {
           messages.forEach(msg => renderMessage(msg))
+         } else {
+          showEmptyState(partnerName)
          }
+         return true;
       }
 
          socket.on('receive_message', (newMessage) => {
@@ -262,6 +287,7 @@ export const initChatUi = {
 
 
     const switchPrivateChat = async (clickedUser) => {
+      showEmptyState(clickedUser.username)
       const msg = `Chatting with ${clickedUser.username}`
       toggleLoader(true, msg);
       const roomId = [userId, clickedUser.id].sort().join('_');
@@ -269,7 +295,8 @@ export const initChatUi = {
       toggleUserList()
 
       socket.emit('join_private_chat', currentActiveRoom);
-      await fetchRoomHistory(currentActiveRoom);
+      const partnerName = clickedUser.username;
+      await fetchRoomHistory(currentActiveRoom, partnerName);
       if (chatTitle) {
        chatTitle.innerText = `chatting with ${clickedUser.username}`
        }
@@ -292,28 +319,28 @@ export const initChatUi = {
      }
     })
 
-    serviceBag.getHistory().then((messages) => {
-      if (Array.isArray(messages)) {
-      messages.forEach((msg) => {
-           renderMessage(msg)
-      });
-    } 
-    toggleLoader(false)
-    
-    })
-    .catch(err => {
-      console.error(err);
-      if (shwifty && loader ) {
+
+    const initApp = async() => {
+      toggleLoader(true, 'Finding Your Yessages...');
+      try {
+        await fetchRoomHistory('global');
+        toggleLoader(false)
+      } catch (err) {
+            if (shwifty && loader ) {
         shwifty.classList.add('shwifty-err')
         logoutBtn.classList.add('logout-err')
         loader.prepend(shwifty)
         loader.append(logoutBtn)
         shwifty.onclick = () => {
         window.location.reload();
+        
      }
       }
         toggleLoader(true, 'Your session is out of sync. Please try logging out and back in to stabilize the portal.')
-    })
+      }
+    }
+    initApp()
+ 
      shwifty.onclick = () => {
       window.location.reload();
      }

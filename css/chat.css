@@ -271,8 +271,25 @@ body{
 
 .timestamp {
   font-size: 0.7rem;
-  color: #000;
+  color: aliceblue;
   font-weight: normal;
+}
+.date-seperator {
+  text-align:center;
+  margin:20px 0;
+  font-size: 0.7rem;
+  color: #888;
+  position:relative;
+}
+.date-separator::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: rgba(255, 47, 47, 0.2);
+    z-index: -1;
 }
 
 .user-label{

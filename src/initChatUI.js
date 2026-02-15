@@ -71,9 +71,21 @@ export const initChatUi = {
      
       transports: ['websocket', 'polling']
     });
-
+     
+    let lastRenderDate = null;
   const renderMessage = async (msg) => {
         // time
+       const msgDate = new Date(msg.created_at).toDateString();
+
+       if (msgDate !== lastRenderDate) {
+          const divider = document.createElement('div')
+          divider.className = 'date-seperator'
+          divider.innerText = msgDate === new Date().toDateString() ? 'Today' : msgDate;
+          chatWindow.appendChild(divider);
+          lastRenderDate = msgDate
+       }
+
+
        let rawTime = msg.created_at;
       let dateObj
       if (rawTime) {

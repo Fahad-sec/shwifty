@@ -2,7 +2,7 @@ export const initChatUi = {
   
   setup: function(serviceBag, userId, username)  {
       let currentActiveRoom = 'global'
-
+    const shwifty = document.querySelector('.shwifty');
     const input = document.getElementById('messageInput')
     const btn = document.getElementById('send-btn')
     const chatWindow = document.getElementById('chat-window')
@@ -12,6 +12,8 @@ export const initChatUi = {
     const chatTitle = document.getElementById('chat-title')
     const loader  = document.getElementById('loading-screen')
     const loadingMsg = document.querySelector('.loading-msg')
+    const logoutBtn = document.getElementById('logout-btn')
+
     
     const toggleLoader = (show, msg) => {
       if (!loader) return ;
@@ -285,20 +287,25 @@ export const initChatUi = {
       });
     } 
     toggleLoader(false)
-    }).catch(err => {
-      console.error(err);
-      toggleLoader(true, err)
+    
     })
-    pageReload()
-
+    .catch(err => {
+      console.error(err);
+      if (shwifty && loader ) {
+        shwifty.classList.add('shwifty-err')
+        logoutBtn.classList.add('logout-err')
+        loader.prepend(shwifty)
+        loader.append(logoutBtn)
+        shwifty.onclick = () => {
+        window.location.reload();
+     }
+      }
+        toggleLoader(true, 'Your session is out of sync. Please try logging out and back in to stabilize the portal.')
+    })
+     shwifty.onclick = () => {
+      window.location.reload();
+     }
   }
 }
 
-const pageReload = () => {
-  const shwifty = document.querySelector('.shwifty');
-
-  shwifty.addEventListener('click', () => {
-    window.location.reload();
-  })
-}
 

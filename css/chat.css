@@ -35,15 +35,57 @@ body{
 }
 .shwifty{
   display: flex;
+  justify-content:center;
+  align-items:center;
   height: 4.5vh;
   font-size:3vh;
   color:#ff2f2f;
-  border: solid 1px #ff2f2f;
+  border: transparent 1px #ff2f2f;
   padding: 2px 18px;
   border-radius:10px;
+  overflow:hidden;
   cursor: pointer;
-    box-shadow:0px 0px 0px 2px red;
+  position:relative;
+  box-shadow:0px 0px 0px 2px red;
+  text-shadow: 
+  0 0 5px #ff2f2f,
+  0 0 10px #ff2f2f, 
+  0 0 20px #ff2f2f; 
+}
 
+.shwifty::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent, 
+    #ff2f2f, 
+    #ff2f2f, 
+    transparent 30%
+  );
+  animation: rotate-flame 2s linear infinite;
+  z-index: -1;
+}
+
+.shwifty::after {
+  content: "";
+  position: absolute;
+  inset: 2px; 
+  background: #111;
+  border-radius: 6px;
+  z-index: -1;
+}
+
+@keyframes rotate-flame {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes steady-glow {
+  0%, 100% { text-shadow: 0 0 5px #00ff88, 0 0 10px #ff2f2f, 0 0 20px #00ff88; }
+  50% { text-shadow: 0 0 7px #00ff88, 0 0 12px #ff2f2f, 0 0 25px #00ff88; }
 }
 #logout-btn {
   padding:3px 25px;
@@ -233,7 +275,7 @@ body{
   width:fit-content;
   box-shadow: 0 0 10px rgba(255, 47, 47, 0.6);
   transition: all 0.3s ease;
-  animation: attention-pulse 2s infinite;
+  animation: attention-pulse 1.5s infinite;
 }
 @keyframes attention-pulse {
   0% { box-shadow: 0 0 0 0px rgba(255, 47, 47, 0.7); }
@@ -245,7 +287,21 @@ body{
   color: #00ff88; 
   font-weight: bold;
   min-width: 10px; 
+  animation: pulse 1.5s infinite ease-in-out;
 }
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    text-shadow: 0 0 5px #00ff88;
+  }
+  50% {
+    opacity: 0.5;
+    text-shadow: 0 0 0px #00ff88;
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 5px #00ff88;
+  }}
 
 #stats-window {
   position:absolute;

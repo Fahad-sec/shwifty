@@ -74,25 +74,21 @@ export const initChatUi = {
 
 
 
-     socket.on('private_notification', (newMessage) => {
+     socket.on('receive_message', (newMessage) => {
       if (currentActiveRoom === newMessage.room_id) {
         return;
       }
 
       if (Notification.permission === 'granted') {
-        new Notification('Dm from ${newMessage.username', {
+        new Notification(`Dm from ${newMessage.username}`, {
           body: newMessage.content,
           tag: newMessage.room_id
         })
       }
-      const onlineBtn = document.getElementById('notify-dot');
+      const notifyDot = document.getElementById('notify-dot');
+      if (notifyDot)
       onlineBtn.classList.add('unread-notify')
      })
-
-
-
-
-
 
 
            const showEmptyState = (partnerName) => {
@@ -289,8 +285,9 @@ export const initChatUi = {
 
         const toggleUserList = () => {
         const usersWindow =   document.querySelector('.users-window')
+        const notifyDot = document.getElementById('notify-dot');
         usersWindow.classList.toggle('users-show');
-        
+
          if (onlineBtn.innerText === '︽') {
 
         onlineBtn.innerHTML = '︾'
@@ -299,6 +296,9 @@ export const initChatUi = {
       }
              
      if (usersWindow.classList.contains('users-show')) {
+        if (notifyDot) {
+            notifyDot.classList.remove('unread-notify')
+      }
       serviceBag.loadOnlineUsers((clickedUser) => {
         switchPrivateChat(clickedUser);
 

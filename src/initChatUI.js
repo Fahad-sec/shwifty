@@ -69,7 +69,7 @@ export const initChatUi = {
      
     const socket = io(import.meta.env.VITE_SERVER_URL ||"http://localhost:3001", {
      
-      transports: ['websocket', 'polling']
+      transports: ['polling', 'websocket']
     });
            const showEmptyState = (partnerName) => {
         const emptyDiv  = document.createElement('div');
@@ -230,13 +230,25 @@ export const initChatUi = {
       if (newMessage.room_id === currentActiveRoom) {
         renderMessage(newMessage)
 
-        if ( !document.hasFocus() && Notification.permission === 'granted') {
+        const isPrivate = newMessage.room_id.startsWith('private_');
+        const isDifferentRoom = newMessage.room_id !== currentActiveRoom;
 
-          new Notification(`New message from ${newMessage.username}`, {
+
+        if (Notification.permission === 'granted') {
+           if (!document.hasFocus() || isDifferentRoom) {
+             
+            const Title = isPrivate? `Dm: ${newMessage.username}` : `Global: ${newMessage.username}`
+
+            new Notification(`New ${Title}`, {
             body: newMessage.content,
             icon: './images/page-logo.png' ,
-            tag: Date.now()
+            tag: newMessage.room_id
           })
+
+           } 
+
+
+
         }
       }
     }); 

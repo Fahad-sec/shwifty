@@ -322,9 +322,18 @@ export const initChatUi = {
 
     const initApp = async() => {
       toggleLoader(true, 'Finding Your Messages...');
+
+      const timeoutLimit = 7000;
+      const timeoutPromise = new Promise((_, reject)=>          setTimeout(() => reject(new Error('Portal Timeout')), timeoutLimit)
+     );   
+
+
+
       try {
-        await fetchRoomHistory('global');
+        await Promise.race([fetchRoomHistory('global'),
+          timeoutPromise]);
         toggleLoader(false)
+        
       } catch (err) {
             if (shwifty && loader ) {
         shwifty.classList.add('shwifty-err')
@@ -336,7 +345,11 @@ export const initChatUi = {
         
      }
       }
-        toggleLoader(true, 'Your session is out of sync. Please try logging out and back in to stabilize the portal.')
+      const defaultErr = 'Your session is out of sync. Please try logging out and back in to stabilize the portal.'
+      const timeoutErr = 'Connection timed out. Tap the logo to try again or try logging back in.'
+      const errMsg = err.message === 'Portal Timeout'? timeoutErr: defaultErr
+      
+        toggleLoader(true, errMsg )
       }
     }
     initApp()

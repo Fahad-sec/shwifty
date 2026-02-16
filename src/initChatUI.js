@@ -67,10 +67,34 @@ export const initChatUi = {
 
 
      
-    const socket = io(import.meta.env.VITE_SERVER_URL ||"http://localhost:3001", {
+    const socket = io(import.meta.env.VITE_SERVER_URL, {
      
       transports: ['polling', 'websocket']
     });
+
+
+
+     socket.on('private_notification', (newMessage) => {
+      if (currentActiveRoom === newMessage.room_id) {
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        new Notification('Dm from ${newMessage.username', {
+          body: newMessage.content,
+          tag: newMessage.room_id
+        })
+      }
+      const onlineBtn = document.getElementById('notify-dot');
+      onlineBtn.classList.add('unread-notify')
+     })
+
+
+
+
+
+
+
            const showEmptyState = (partnerName) => {
         const emptyDiv  = document.createElement('div');
         emptyDiv.className = 'empty-chat-placeholder'

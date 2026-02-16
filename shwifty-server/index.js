@@ -2,14 +2,14 @@ const express = require('express');
 const http = require('http');
 const {Server} = require('socket.io');
 const cors = require('cors');
-
+require('dotenv').config();
 const {createClient} = require('@supabase/supabase-js')
 const supaBase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
 
 
 const app = express();
 app.use(cors({
-  origin: ["https://shwifty.vercel.app", 'http://127.0.0.1:5173'],
+  origin: ['http://localhost:5176'],
   allowedHeaders: ["Authorization", "Content-Type"]
 }));
 
@@ -32,6 +32,7 @@ app.get('/history', async (req, res) => {
   const {data, error} = await supaBase
    .from('messages')
    .select('*')
+   .eq('room_id', req.query.roomId || 'global')
    .order('created_at', {ascending: true});
 
    if (error) return res.status(500).json(error)
@@ -43,7 +44,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://shwifty.vercel.app", "http://127.0.0.1:5173"],
+    origin: [ "http://localhost:5176"],
     methods: ["GET", "POST"],
     allowedHeaders: ["Authorization", "Content-Type"]
   }
@@ -53,20 +54,24 @@ const activeUsers = new Map();
 io.on('connection', (socket) => {
   console.log('A user connected: ID:', socket.id );
 
-    socket.on('join_private_chat', (roomId) => {
-      const currentRooms = Array.from(socket.rooms);
-      currentRooms.forEach(room => {
-        if (room !== socket.id) socket.leave(room);
-      });
-      socket.join(roomId);
-      console.log(`User joined room: ${roomId}`);
+    socket.on('join_private_chat', (newRoomId) => {
+
+      const roomsToLeave = Array.from(socket.rooms).filter(room => 
+        room!== socket.id &&
+        room!== 'global' &&
+        !room.startsWith('user_')
+      )
+      roomsToLeave.forEach(room => socket.leave(room))
+      socket.join(newRoomId)
+      console.log(`User${socket.id} joined room: ${newRoomId}`);
     })
 
   
-  
-  
   socket.on('register_user', (userId) => {
      activeUsers.set(socket.id, userId);
+     const personalRoom = `user_${userId}`
+     socket.join(personalRoom);
+     console.log(`User ${userId} registered and joined maailbox: ${personalRoom}`)
     broadcastUniqueCount();
   })
 
@@ -81,7 +86,7 @@ io.on('connection', (socket) => {
   })
   
   socket.on('typing', (data) => {
-    socket.broadcast.emit('user_typing', data);
+    socket.to(data.room_id || 'global').emit('user_typing', data);
   })
    
   socket.on('send_message', async(data) => {      
@@ -90,7 +95,8 @@ io.on('connection', (socket) => {
     .insert([{
       content: data.content,
       user_id: data.user_id,
-      username: data.username
+      username: data.username,
+      room_id: data.room_id || 'global'
     }])
     .select()
     .single()
@@ -100,10 +106,18 @@ io.on('connection', (socket) => {
       return;
     }
 
-    io.emit('receive_message', {
-      ...savedMessage,
-      username: data.username
-    })
+    const messagePayload = {... savedMessage, username: data.username};
+
+    io.to(data.room_id ||'global').emit('receive_message', messagePayload)
+
+    if (data.room_id.startsWith('private_')) {
+      const ids = data.room_id.replace('private_', '').split('_');
+      const recipientId = ids.find(id => id !== data.user_id);
+
+      if (recipientId) {
+        io.to(`user_${recipientId}`).emit('receive_message', messagePayload)
+      }
+    }
 
   });
   socket.on('disconnect', () => {

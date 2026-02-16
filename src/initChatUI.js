@@ -321,7 +321,7 @@ export const initChatUi = {
 
 
     const initApp = async() => {
-      toggleLoader(true, 'Finding Your Yessages...');
+      toggleLoader(true, 'Finding Your Messages...');
       try {
         await fetchRoomHistory('global');
         toggleLoader(false)

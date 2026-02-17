@@ -1,11 +1,12 @@
 import {supaBase} from './supabase.js'
 import {type AuthChangeEvent, type  Session } from '@supabase/supabase-js'
 
-const loader  = document.getElementById('loading-screen') as HTMLElement
-const loadingMsg = document.querySelector('.loading-msg') as HTMLElement
+const loader  = document.getElementById('loading-screen') 
+const loadingMsg = document.querySelector('.loading-msg') 
     
     const toggleLoader = (show: boolean, msg?: string) => {
-      if (!loader) return ;
+      if (!(loader instanceof HTMLElement) || !(loadingMsg instanceof HTMLElement)) return ;
+      
       if (show) {
         loadingMsg.innerText  = msg || '';
         loader.style.display = 'flex';
@@ -15,7 +16,6 @@ const loadingMsg = document.querySelector('.loading-msg') as HTMLElement
         setTimeout(() => loader.style.display = 'none', 500)
       }
     }
-
 
    supaBase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null ) => {
     console.log('Auth Event Types:', event)
@@ -44,18 +44,20 @@ const loadingMsg = document.querySelector('.loading-msg') as HTMLElement
   
 let isLoginMode = true;
 
-const signupBtn = document.getElementById('signup-btn') as HTMLButtonElement;
-const loginBtn = document.getElementById('login-btn') as HTMLButtonElement;
-const logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement;
-const authToggle = document.getElementById('auth-toggle') as HTMLButtonElement;
-const userName = document.getElementById('username') as HTMLInputElement;
-
-
-
+const signupBtn = document.getElementById('signup-btn');
+const loginBtn = document.getElementById('login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const authToggle = document.getElementById('auth-toggle');
+const userName = document.getElementById('username');
 
 authToggle?.addEventListener('click', () => {
   isLoginMode = !isLoginMode;
-
+  
+  if (
+    !(loginBtn instanceof HTMLButtonElement)||
+    !(userName instanceof HTMLInputElement) ||
+    !(signupBtn instanceof HTMLButtonElement)
+  ) return;
   if (isLoginMode) {
     authToggle.innerHTML = "Don't have an account?"
     signupBtn.style.display = 'none'
@@ -69,11 +71,11 @@ authToggle?.addEventListener('click', () => {
   }
 })
 
-
 logoutBtn?.addEventListener('click', async () =>{
   const confirmed = confirm("Are you sure you want to logout?")
-  if (confirmed) {
-     toggleLoader(true, 'See you soon!')
+
+  if (!confirmed || !(logoutBtn instanceof HTMLButtonElement)) return;
+   toggleLoader(true, 'See you soon!')
   logoutBtn.disabled = true;
   logoutBtn.style.opacity = "0.7";
   logoutBtn.style.cursor = "not-allowed";
@@ -90,24 +92,20 @@ logoutBtn?.addEventListener('click', async () =>{
     console.log('successfully logged out ')
     window.location.href = "./index.html"
   }
-
-  } else {
-    console.log('logout cancelled')
-  }
-
   })
-
 
 loginBtn?.addEventListener('click', async () => {
   toggleLoader(true, 'Verifying your account...' );
-  
-  const emailElement = document.getElementById('email') as HTMLInputElement;
-  const passwordElement = document.getElementById('password') as HTMLInputElement
-  if (emailElement && passwordElement) {
+   
+  const emailElement = document.getElementById('email');
+  const passwordElement = document.getElementById('password');
+    if (
+      !(loginBtn instanceof HTMLButtonElement) ||
+      !(emailElement instanceof HTMLInputElement) ||
+      !(passwordElement instanceof HTMLInputElement)
+    ) return;
     const email = emailElement.value;
     const password = passwordElement.value;
-  
-
 
       loginBtn.disabled = true;
       loginBtn.innerText = "Authenticating..."
@@ -130,30 +128,31 @@ loginBtn?.addEventListener('click', async () => {
       }else {
         window.location.href = './chatroom.html'
       }
-    }
   })
 
 signupBtn?.addEventListener('click', async() => {
   toggleLoader(true, 'Creating you account...' )
     
-    const emailElement = document.getElementById('email') as HTMLInputElement;
-    const passwordElement = document.getElementById('password') as HTMLInputElement
-    const usernameElement = document.getElementById('username') as HTMLInputElement;
-
-    if (emailElement && passwordElement && usernameElement )
-    {
+    const emailElement = document.getElementById('email');
+    const passwordElement = document.getElementById('password');
+    const usernameElement = document.getElementById('username');
+      
+    if (
+      !(emailElement instanceof HTMLInputElement)||
+      !(passwordElement instanceof HTMLInputElement) ||
+      !(usernameElement instanceof HTMLInputElement) ||
+      !(signupBtn instanceof HTMLButtonElement)
+    ) return;
+    
       const email = emailElement.value;
       const password = passwordElement.value;
       const username = usernameElement.value
-    
-  
 
       signupBtn.disabled = true;
       signupBtn.innerText = "Signing up..."
       signupBtn.style.opacity = "0.7";
       signupBtn.style.cursor = "not-allowed";
   
-
     const {error } = await supaBase.auth.signUp({
       email: email,
       password: password,
@@ -173,8 +172,6 @@ signupBtn?.addEventListener('click', async() => {
     } else {
       alert('check your email for a confirmation linK!')
     }
-
-  }
   })
 
 

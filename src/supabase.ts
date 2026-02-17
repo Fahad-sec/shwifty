@@ -1,7 +1,12 @@
-const supaBaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supaBaseKey = import.meta.env.VITE_SUPABASE_KEY;
+import {createClient} from '@supabase/supabase-js'
 
-export const supaBase = window.supabase.createClient(supaBaseUrl, supaBaseKey, {
+const SUPABASEURL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASEKEY = import.meta.env.VITE_SUPABASE_KEY;
+
+if (!SUPABASEURL || !SUPABASEKEY) {
+  throw new Error("Missing Supabase environment Variables. Check env file")
+}
+export const supaBase = createClient(SUPABASEURL, SUPABASEKEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,

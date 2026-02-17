@@ -173,6 +173,3 @@ signupBtn?.addEventListener('click', async() => {
       alert('check your email for a confirmation linK!')
     }
   })
-
-
-

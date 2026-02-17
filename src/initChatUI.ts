@@ -1,6 +1,9 @@
+import type { Messages, ChatUser, ServiceBag } from './type';
+
+
 export const initChatUi = {
   
-  setup: function(serviceBag, userId, username)  {
+  setup: function(serviceBag: ServiceBag, userId: string, username: string)  {
       let currentActiveRoom = 'global'
     const shwifty = document.querySelector('.shwifty');
     const input = document.getElementById('messageInput')
@@ -13,13 +16,15 @@ export const initChatUi = {
     const loader  = document.getElementById('loading-screen')
     const loadingMsg = document.querySelector('.loading-msg')
     const logoutBtn = document.getElementById('logout-btn')
+    const nameElement = document.getElementById('username')
+
 
     
-    const toggleLoader = (show, msg) => {
+    const toggleLoader = (show: boolean, msg?: string) => {
       if (!loader) return ;
+      if (!(loadingMsg instanceof HTMLElement)) return
       if (show) {
-        console.log(msg)
-        loadingMsg.innerText = msg
+        loadingMsg.innerText = msg || '';
         loader.style.display = 'flex';
         loader.classList.remove( 'loader-hidden')
       } else {
@@ -30,7 +35,11 @@ export const initChatUi = {
 
 
     const displayName = () => {
-      const nameElement = document.getElementById('username')
+
+      if (
+        !(nameElement instanceof HTMLElement) ||
+        !(notifyHeader instanceof HTMLElement)
+      ) return
        nameElement.innerText = `${username}`
       notifyHeader.appendChild(nameElement)
     
@@ -38,6 +47,7 @@ export const initChatUi = {
     displayName()
     
     const initNotifications = async () => {
+       if (!(notifyBtn instanceof HTMLButtonElement)) return;
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
           notifyBtn.innerText = 'Notify On'
@@ -46,9 +56,9 @@ export const initChatUi = {
           new Notification('Shwifty', {body: "Notifications enabled"})
         } 
     }    
-    if (notifyBtn) {
+    if (!(notifyBtn instanceof HTMLButtonElement)) return;
        notifyBtn.addEventListener('click', initNotifications)
-      }
+      
       
       const checkNotifications = () => {
         const permission = Notification.permission
@@ -59,7 +69,7 @@ export const initChatUi = {
           notifyBtn.disabled = true
         } else {
           notifyBtn.innerText = 'Notify-OFF'
-          notifyBtn.backgroundColor = ''
+          notifyBtn.style.backgroundColor = ''
           notifyBtn.disabled = false
         }
       }
@@ -67,45 +77,23 @@ export const initChatUi = {
 
 
      
-    const socket = io(import.meta.env.VITE_SERVER_URL, {
-     
-      transports: ['polling', 'websocket']
-    });
+    const socket = serviceBag.socket;
 
-
-
-     socket.on('receive_message', (newMessage) => {
-      if (currentActiveRoom === newMessage.room_id) {
-        return;
-      }
-
-      if (Notification.permission === 'granted') {
-        new Notification(`Dm from ${newMessage.username}`, {
-          body: newMessage.content,
-          tag: newMessage.room_id
-        })
-      }
-      const notifyDot = document.getElementById('notify-dot');
-      if (notifyDot)
-      onlineBtn.classList.add('unread-notify')
-     })
-
-
-           const showEmptyState = (partnerName) => {
+        const showEmptyState = (partnerName?: string) => {
         const emptyDiv  = document.createElement('div');
         emptyDiv.className = 'empty-chat-placeholder'
 
         emptyDiv.innerHTML = `
 
             <div class="placeholder-icon">🔒</div>
-            <p>Start a conversation with <b>${partnerName}</b>
+            <p>Start a conversation with <b>${partnerName}</b></p>
             <small>Messages are secure and private.</small>
         `
-        chatWindow.appendChild(emptyDiv)
+        chatWindow?.appendChild(emptyDiv)
 
       }
-    let lastRenderDate = null;
-  const renderMessage = async (msg) => {
+    let lastRenderDate: string | null = null;
+  const renderMessage = async (msg: Omit<Messages, 'id'>) => {
 
     const placeHolder = document.querySelector('.empty-chat-placeholder')
     if (placeHolder) placeHolder.remove();
@@ -116,7 +104,7 @@ export const initChatUi = {
           const divider = document.createElement('div')
           divider.className = 'date-seperator'
           divider.innerText = msgDate === new Date().toDateString() ? 'Today' : msgDate;
-          chatWindow.appendChild(divider);
+          chatWindow?.appendChild(divider);
           lastRenderDate = msgDate
        }
 
@@ -156,19 +144,20 @@ export const initChatUi = {
           </div>
       `;
 
-
+      if (chatWindow instanceof HTMLElement) { 
       chatWindow.appendChild(msgDiv);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-
+      chatWindow.scrollTop = chatWindow?.scrollHeight;
+      }
     }
 
       
      const sendMessage =  () => {
+      if (!(input instanceof HTMLInputElement)) return
       const text = input.value.trim()
         const  finalUsername = username || 'guest'
 
       if (text !== '') {
-       const localMsg = {
+       const localMsg: Omit<Messages, 'id'> = {
         content: text,
         user_id: userId,
         username: finalUsername,
@@ -186,8 +175,12 @@ export const initChatUi = {
      }
 
      // typing indicator: 
+    
       const typingIndicator = document.querySelector('.typing-indicator');
-      let typingTimeout;
+      if (!(typingIndicator instanceof HTMLElement)||
+          !(input instanceof HTMLInputElement)
+      ) return;
+      let typingTimeout: ReturnType<typeof setTimeout> | undefined ;
       input.addEventListener('input', () => {
         socket.emit('typing', {username: username, isTyping: true, room_id: currentActiveRoom})
         clearTimeout(typingTimeout);
@@ -203,7 +196,9 @@ export const initChatUi = {
         } else {
           typingIndicator.innerText ='';
         }
-      }) // ------------------------------------------------------------
+      }) 
+      
+      // ------------------------------------------------------------
          // online count 
 
       socket.on('user_count_update', (count) => {
@@ -228,8 +223,8 @@ export const initChatUi = {
       
       // rendermsg socket
          
-      const fetchRoomHistory = async (roomId, partnerName) => {
-
+      const fetchRoomHistory = async (roomId: string, partnerName?: string) => {
+        if (!(chatWindow instanceof HTMLElement)) return;
         chatWindow.innerHTML = ''
 
         lastRenderDate = null;
@@ -242,50 +237,54 @@ export const initChatUi = {
          }
          return true;
       }
-
+            
          socket.on('receive_message', (newMessage) => {
           if (newMessage.user_id === userId) {
             return
           }
-      if (newMessage.room_id === currentActiveRoom) {
+
+          if (newMessage.room_id === currentActiveRoom) {
         renderMessage(newMessage)
-
-        const isPrivate = newMessage.room_id.startsWith('private_');
-        const isDifferentRoom = newMessage.room_id !== currentActiveRoom;
-
-
-        if (Notification.permission === 'granted') {
-           if (!document.hasFocus() || isDifferentRoom) {
-             
-            const Title = isPrivate? `Dm: ${newMessage.username}` : `Global: ${newMessage.username}`
-
-            new Notification(`New ${Title}`, {
+          
+        if (!document.hasFocus() && Notification.permission === 'granted') {
+          
+           new Notification(`New Message from ${newMessage.username}`,{
             body: newMessage.content,
-            icon: './images/page-logo.png' ,
+            icon: './images/page-logo.png',
             tag: newMessage.room_id
-          })
-
-           } 
-
-
-
+        });
         }
-      }
+      } 
+        else {
+          if (onlineBtn instanceof HTMLButtonElement) {
+            onlineBtn.classList.add('unread-notify');
+          } 
+
+
+          const notifyDot = document.getElementById('notify-dot');
+          if (notifyDot) notifyDot.classList.add('unread-notify')
+
+            if (Notification.permission === 'granted') {
+              const isPrivate = newMessage.room_id.startsWith('private_');
+              const title = isPrivate ? `Dm: ${newMessage.username}`: `Global: ${newMessage.username}`
+
+              new Notification(`New ${title}`, {
+                body: newMessage.content,
+                icon: './images/page-logo.png',
+                tag: newMessage.room_id
+              })
+            }
+        }
     }); 
-           
-           const initUserList = () => {
-            serviceBag.loadOnlineUsers((clickedUser) => {
-              switchPrivateChat(clickedUser)
-              toggleUserList()
-            });
-           };
-            
-            initUserList();
+      
 
-
-        const toggleUserList = () => {
+    const toggleUserList = () => {
         const usersWindow =   document.querySelector('.users-window')
         const notifyDot = document.getElementById('notify-dot');
+        if (
+          !(usersWindow instanceof HTMLElement) ||
+          !(onlineBtn instanceof HTMLElement)
+        ) return
         usersWindow.classList.toggle('users-show');
 
          if (onlineBtn.innerText === '︽') {
@@ -306,23 +305,7 @@ export const initChatUi = {
      }
      }
 
-    
-     if (chatTitle) {
-      chatTitle.addEventListener('click', async () => {
-        if (currentActiveRoom !== 'global') {
-          
-          toggleLoader(true, 'Back To Lobby')
-          currentActiveRoom = 'global';
-          chatTitle.innerText ='Global Lobby';
-          socket.emit('join_private_chat', 'global');
-          await fetchRoomHistory('global');
-          toggleLoader(false)
-        }
-      })
-     }
-
-
-    const switchPrivateChat = async (clickedUser) => {
+      const switchPrivateChat = async (clickedUser: ChatUser) => {
       showEmptyState(clickedUser.username)
       const msg = `Chatting with ${clickedUser.username}`
       toggleLoader(true, msg);
@@ -341,8 +324,37 @@ export const initChatUi = {
        
        
     } 
-
+           const initUserList = () => {
+            serviceBag.loadOnlineUsers((clickedUser) => {
+              switchPrivateChat(clickedUser)
+              toggleUserList()
+            });
+           };
+            
+            initUserList();
     
+     if (chatTitle) {
+      chatTitle.addEventListener('click', async () => {
+        if (currentActiveRoom !== 'global') {
+          
+          toggleLoader(true, 'Back To Lobby')
+          currentActiveRoom = 'global';
+          chatTitle.innerText ='Global Lobby';
+          socket.emit('join_private_chat', 'global');
+          await fetchRoomHistory('global');
+          toggleLoader(false)
+        }
+      })
+     }
+
+
+
+
+    if (
+      !(onlineBtn instanceof HTMLButtonElement) ||
+      !(btn instanceof HTMLButtonElement) ||
+      !(input instanceof HTMLInputElement)
+    ) return
      
     onlineBtn.addEventListener('click', () => {
         toggleUserList()
@@ -366,12 +378,19 @@ export const initChatUi = {
 
 
       try {
+        if (!socket.connected) {
+          await new Promise<void>((res) => socket.once('connect', res))
+        }
         await Promise.race([fetchRoomHistory('global'),
           timeoutPromise]);
         toggleLoader(false)
         
       } catch (err) {
-            if (shwifty && loader ) {
+        if (
+          !(shwifty instanceof HTMLElement)||
+          !(logoutBtn instanceof HTMLButtonElement) ||
+          !(loader instanceof HTMLElement)
+        )return
         shwifty.classList.add('shwifty-err')
         logoutBtn.classList.add('logout-err')
         loader.prepend(shwifty)
@@ -380,16 +399,18 @@ export const initChatUi = {
         window.location.reload();
         
      }
-      }
+      
       const defaultErr = 'Your session is out of sync. Please try logging out and back in to stabilize the portal.'
       const timeoutErr = 'Connection timed out. Tap the logo to try again or try logging back in.'
+      if (err instanceof Error) {
       const errMsg = err.message === 'Portal Timeout'? timeoutErr: defaultErr
       
         toggleLoader(true, errMsg )
       }
+      }
     }
     initApp()
- 
+     if (!(shwifty instanceof HTMLElement)) return
      shwifty.onclick = () => {
       window.location.reload();
      }

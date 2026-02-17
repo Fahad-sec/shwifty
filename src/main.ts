@@ -1,29 +1,11 @@
 import {supaBase} from './supabase'
 import {initChatUi} from "./initChatUI"
-import {io, Socket} from "socket.io-client"
+import {io} from "socket.io-client"
+import type { Messages, ChatUser, ServiceBag } from './type';
 
 const socket = io(import.meta.env.VITE_SERVER_URL, {
   transports: ['polling', 'websocket']
 })
-
-interface Messages {
-  user_id: string;
-  id: number;
-  created_at: string;
-  content: string;
-  username: string;
-  room_id:string;
-
-}
-interface ServiceBag{
-  getHistory: (roomId?: string) => Promise<Messages[]>;
-  loadOnlineUsers: (onUserClick: (user: ChatUser) => void) => Promise<void>;
-  socket: Socket
-}
-interface ChatUser {
-  username: string;
-  id:string;
-}
 
 async function startApp () {
   const {data: {session}} = await supaBase.auth.getSession();
@@ -73,7 +55,7 @@ const serviceBag: ServiceBag= {
             usersList.appendChild(div)
           })
    },
-  socket,
+  socket: socket,
   
 }
 initChatUi.setup(serviceBag, userId, username)

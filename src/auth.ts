@@ -17,7 +17,7 @@ const loadingMsg = document.querySelector('.loading-msg')
         setTimeout(() => loader.style.display = 'none', 500)
       }
     }
-  /*supaBase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null ) => {
+  supaBase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null ) => {
      const path = window.location.pathname
     const isChatPage = path.includes('chatroom');
     const isLoginPage = path.includes('index') || path.endsWith('/')
@@ -26,7 +26,7 @@ const loadingMsg = document.querySelector('.loading-msg')
 
       document.body.style.display = 'flex'
       if (isLoginPage) {
-        window.location.href = "chatroom";
+        window.location.href = "/chatroom.html";
         return
       } 
     } else {
@@ -34,31 +34,10 @@ const loadingMsg = document.querySelector('.loading-msg')
       toggleLoader(false)
 
       if (isChatPage) {
-        window.location.href = 'index';
+        window.location.href = '/index.html';
       } 
     }
-}); */supaBase.auth.onAuthStateChange((event, session) => {
-  const path = window.location.pathname;
-  const isChatPage = path.includes('chatroom');
-  const isLoginPage = path.includes('index') || path === '/' || path.endsWith('index.html');
-
-  console.log(`Auth Event: ${event}`, !!session);
-
-  if (session) {
-    // ONLY redirect if they are stuck on the login page
-    if (isLoginPage) {
-      window.location.href = "chatroom"; 
-    }
-  } else {
-    // ONLY redirect if an unauthenticated user tries to peek at the chat
-    if (isChatPage) {
-      window.location.href = 'index';
-    }
-  }
-  
-  // Ensure the UI is visible regardless of the auth outcome
-  document.body.style.display = 'flex';
-});
+}); 
   
 let isLoginMode = true;
 

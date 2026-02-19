@@ -1,16 +1,25 @@
-const express = require('express');
-const http = require('http');
-const {Server} = require('socket.io');
-const cors = require('cors');
-require('dotenv').config();
-const {createClient} = require('@supabase/supabase-js')
-const supaBase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+import express from 'express';
+import http from 'http';
+import {Server} from 'socket.io'
+import cors from 'cors';
+import 'dotenv/config';
+
+import {createClient} from '@supabase/supabase-js'
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  throw new Error ('missing environment variables')
+}
+
+const supaBase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:5176'],
-  allowedHeaders: ["Authorization", "Content-Type"]
+origin: ['https://shwifty.vercel.app', 'http://localhost:3000', 'http://localhost:4173', 'http://localhost:5173'],
+  allowedHeaders: ["Authorization", "Content-Type"],
+  credentials: true
 }));
 
 
@@ -18,7 +27,6 @@ app.get('/history', async (req, res) => {
 
   const authHeader  = req.headers.authorization;
   if (!authHeader) return res.status(401).json({error: "No token provided"})
-
 
   const token = authHeader.split(' ')[1];
   const {data: {user}, error: authError} = await supaBase.auth.getUser(token);
@@ -35,8 +43,9 @@ app.get('/history', async (req, res) => {
    .eq('room_id', req.query.roomId || 'global')
    .order('created_at', {ascending: true});
 
-   if (error) return res.status(500).json(error)
-    res.json(data);
+   if (error) return res.status(500).json(error);
+
+   return res.json(data || []);
    
 })
 
@@ -44,10 +53,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [ "http://localhost:5176"],
+    origin: [ "http://localhost:4173"],
     methods: ["GET", "POST"],
-    allowedHeaders: ["Authorization", "Content-Type"]
-  }
+    allowedHeaders: ["Authorization", "Content-Type"],
+    credentials: true
+  },
+    transports: ['polling', 'websocket'],
+    allowEIO3: true
 });
 
 const activeUsers = new Map();
@@ -90,13 +102,14 @@ io.on('connection', (socket) => {
   })
    
   socket.on('send_message', async(data) => {      
+    const targetRoom = data.room_id || 'global';
     const {data: savedMessage, error,} = await supaBase
     .from('messages')
     .insert([{
       content: data.content,
       user_id: data.user_id,
       username: data.username,
-      room_id: data.room_id || 'global'
+      room_id: targetRoom
     }])
     .select()
     .single()
@@ -110,9 +123,9 @@ io.on('connection', (socket) => {
 
     io.to(data.room_id ||'global').emit('receive_message', messagePayload)
 
-    if (data.room_id.startsWith('private_')) {
+    if (typeof targetRoom === 'string' && targetRoom.startsWith('private_')) {
       const ids = data.room_id.replace('private_', '').split('_');
-      const recipientId = ids.find(id => id !== data.user_id);
+      const recipientId = ids.find((id: string) => id !== data.user_id);
 
       if (recipientId) {
         io.to(`user_${recipientId}`).emit('receive_message', messagePayload)
@@ -127,7 +140,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT =  process.env.PORT ||7860;
+const PORT =  Number(process.env.PORT) ||7860;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`SHWIFTY SERVER RUNNING ON PORT ${PORT}`);
 })

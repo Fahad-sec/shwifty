@@ -1,9 +1,10 @@
-import {supaBase} from './supabase.js'
+import './main'
+
+import {supaBase} from './supabase'
 import {type AuthChangeEvent, type  Session } from '@supabase/supabase-js'
 
 const loader  = document.getElementById('loading-screen') 
 const loadingMsg = document.querySelector('.loading-msg') 
-    
     const toggleLoader = (show: boolean, msg?: string) => {
       if (!(loader instanceof HTMLElement) || !(loadingMsg instanceof HTMLElement)) return ;
       
@@ -16,31 +17,48 @@ const loadingMsg = document.querySelector('.loading-msg')
         setTimeout(() => loader.style.display = 'none', 500)
       }
     }
-
-   supaBase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null ) => {
-    console.log('Auth Event Types:', event)
+  /*supaBase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null ) => {
      const path = window.location.pathname
-    const isChatPage = path.includes('chatroom.html');
-    const isLoginPage = path.includes('index.html') || path.endsWith('/')
+    const isChatPage = path.includes('chatroom');
+    const isLoginPage = path.includes('index') || path.endsWith('/')
 
     if (session) {
 
       document.body.style.display = 'flex'
       if (isLoginPage) {
-
-        console.log('user is logged in ', session.user)
-        window.location.href = "chatroom.html";
+        window.location.href = "chatroom";
+        return
       } 
     } else {
       document.body.style.display = 'flex'
-      console.log('no active session')
       toggleLoader(false)
 
       if (isChatPage) {
-        window.location.href = 'index.html';
+        window.location.href = 'index';
       } 
     }
-}); 
+}); */supaBase.auth.onAuthStateChange((event, session) => {
+  const path = window.location.pathname;
+  const isChatPage = path.includes('chatroom');
+  const isLoginPage = path.includes('index') || path === '/' || path.endsWith('index.html');
+
+  console.log(`Auth Event: ${event}`, !!session);
+
+  if (session) {
+    // ONLY redirect if they are stuck on the login page
+    if (isLoginPage) {
+      window.location.href = "chatroom"; 
+    }
+  } else {
+    // ONLY redirect if an unauthenticated user tries to peek at the chat
+    if (isChatPage) {
+      window.location.href = 'index';
+    }
+  }
+  
+  // Ensure the UI is visible regardless of the auth outcome
+  document.body.style.display = 'flex';
+});
   
 let isLoginMode = true;
 
@@ -89,7 +107,6 @@ logoutBtn?.addEventListener('click', async () =>{
       logoutBtn.style.cursor = "pointer";
     console.error("logout error: ", error)
   } else {
-    console.log('successfully logged out ')
     window.location.href = "./index.html"
   }
   })
@@ -126,7 +143,7 @@ loginBtn?.addEventListener('click', async () => {
       loginBtn.style.cursor = "pointer";
         alert(error.message)
       }else {
-        window.location.href = './chatroom.html'
+        window.location.href = './chatroom'
       }
   })
 

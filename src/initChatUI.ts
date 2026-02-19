@@ -224,11 +224,13 @@ export const initChatUi = {
       // rendermsg socket
          
       const fetchRoomHistory = async (roomId: string, partnerName?: string) => {
+        toggleLoader(true, 'Finding your messages...')
         if (!(chatWindow instanceof HTMLElement)) return;
         chatWindow.innerHTML = ''
 
         lastRenderDate = null;
          const messages = await serviceBag.getHistory(roomId)
+         toggleLoader(false)
 
          if (Array.isArray(messages) && messages.length > 0) {
           messages.forEach(msg => renderMessage(msg))

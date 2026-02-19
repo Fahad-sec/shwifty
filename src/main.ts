@@ -8,8 +8,7 @@ const socket = io(import.meta.env.VITE_SERVER_URL, {
   path: "/socket.io/",
   secure: true,
   rejectUnauthorized: false,
-  upgrade: false,
-  timeout: 7000,
+  timeout: 20000,
   reconnectionAttempts: 5
 })
 socket.on('connect', () => {

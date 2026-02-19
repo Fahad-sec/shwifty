@@ -5,11 +5,13 @@ import type { Messages, ChatUser, ServiceBag } from './type';
 
 const socket = io(import.meta.env.VITE_SERVER_URL, {
   transports: ['websocket'],
-  path: "/socket.io/",
+  upgrade: false,
   secure: true,
+  rememberUpgrade: true,
+  reconnection: true,
+  reconnectionAttempts: Infinity,
   rejectUnauthorized: false,
-  timeout: 20000,
-  reconnectionAttempts: 5
+  timeout: 10000,
 })
 socket.on('connect', () => {
   const loader = document.getElementById('loading-screen');

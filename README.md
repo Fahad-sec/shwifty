@@ -1,6 +1,6 @@
 # Shwifty
 [![Vercel](https://img.shields.io/badge/Live_Demo-Shwifty-brightgreen?style=for-the-badge&logo=vercel)](https://shwifty.vercel.app)
-![Shwifty Demo](./poc/Shwifty-POC-GIF.gif)
+![Shwifty Demo](./poc/new-gif.gif)
 
 ## Key Technical Achievements
 ### Real-Time Event Architecture

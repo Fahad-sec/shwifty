@@ -121,7 +121,7 @@ io.on('connection', (socket) => {
 
     const messagePayload = {... savedMessage, username: data.username};
 
-    io.to(data.room_id ||'global').emit('receive_message', messagePayload)
+    /*io.to(data.room_id ||'global').emit('receive_message', messagePayload)*/
 
     if (typeof targetRoom === 'string' && targetRoom.startsWith('private_')) {
       const ids = data.room_id.replace('private_', '').split('_');

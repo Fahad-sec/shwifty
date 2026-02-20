@@ -79,6 +79,39 @@ export const initChatUi = {
      
     const socket = serviceBag.socket;
 
+       socket.on('dm_dot', (newMessage) => {
+        if (newMessage.user_id === userId) return
+
+      if (!document.hasFocus() && Notification.permission === 'granted') {
+          
+           new Notification(`New DM from ${newMessage.username}`,{
+            body: newMessage.content,
+            icon: './images/page-logo.png',
+            tag: newMessage.room_id
+        });
+        }
+       })
+
+
+
+      socket.on('receive_message', (newMessage) => {
+          if (newMessage.user_id === userId) return
+
+          if (newMessage.room_id === currentActiveRoom)                {renderMessage(newMessage)
+
+
+      if (!document.hasFocus() && Notification.permission === 'granted') {
+          
+           new Notification(`New Message from ${newMessage.username}`,{
+            body: newMessage.content,
+            icon: './images/page-logo.png',
+            tag: newMessage.room_id
+        });
+        }
+      }
+        
+    }); 
+
         const showEmptyState = (partnerName?: string) => {
         const emptyDiv  = document.createElement('div');
         emptyDiv.className = 'empty-chat-placeholder'
@@ -180,13 +213,21 @@ export const initChatUi = {
       if (!(typingIndicator instanceof HTMLElement)||
           !(input instanceof HTMLInputElement)
       ) return;
+      let isCurrentlyTyping = false;
       let typingTimeout: ReturnType<typeof setTimeout> | undefined ;
       input.addEventListener('input', () => {
+         
+        if (!isCurrentlyTyping) {
+          isCurrentlyTyping  = true
         socket.emit('typing', {username: username, isTyping: true, room_id: currentActiveRoom})
+        }
         clearTimeout(typingTimeout);
 
         typingTimeout = setTimeout(() => {
-          socket.emit('typing', {username: username, isTyping: false})
+          isCurrentlyTyping = false;
+          socket.emit('typing', {username: username, isTyping: false,
+            room_id: currentActiveRoom
+          })
         }, 2000);
       });
 
@@ -240,44 +281,7 @@ export const initChatUi = {
          return true;
       }
             
-         socket.on('receive_message', (newMessage) => {
-          if (newMessage.user_id === userId) {
-            return
-          }
 
-          if (newMessage.room_id === currentActiveRoom) {
-        renderMessage(newMessage)
-          
-        if (!document.hasFocus() && Notification.permission === 'granted') {
-          
-           new Notification(`New Message from ${newMessage.username}`,{
-            body: newMessage.content,
-            icon: './images/page-logo.png',
-            tag: newMessage.room_id
-        });
-        }
-      } 
-        else {
-          if (onlineBtn instanceof HTMLButtonElement) {
-            onlineBtn.classList.add('unread-notify');
-          } 
-
-
-          /*const notifyDot = document.getElementById('notify-dot');
-          if (notifyDot) notifyDot.classList.add('unread-notify')*/
-
-            if (Notification.permission === 'granted') {
-              const isPrivate = newMessage.room_id.startsWith('private_');
-              const title = isPrivate ? `Dm: ${newMessage.username}`: `Global: ${newMessage.username}`
-
-              new Notification(`New ${title}`, {
-                body: newMessage.content,
-                icon: './images/page-logo.png',
-                tag: newMessage.room_id
-              })
-            }
-        }
-    }); 
       
 
     const toggleUserList = () => {

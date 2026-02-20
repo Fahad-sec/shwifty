@@ -1,5 +1,5 @@
 import type { Messages, ChatUser, ServiceBag } from './type';
-
+import { sanitize} from './utils/security'
 
 export const initChatUi = {
   
@@ -153,7 +153,7 @@ export const initChatUi = {
       
      const sendMessage =  () => {
       if (!(input instanceof HTMLInputElement)) return
-      const text = input.value.trim()
+      const text = sanitize(input.value.trim())
         const  finalUsername = username || 'guest'
 
       if (text !== '') {
@@ -224,7 +224,7 @@ export const initChatUi = {
       // rendermsg socket
          
       const fetchRoomHistory = async (roomId: string, partnerName?: string) => {
-        toggleLoader(true, 'Finding your messages...')
+        toggleLoader(true, 'Finding Your Messages...')
         if (!(chatWindow instanceof HTMLElement)) return;
         chatWindow.innerHTML = ''
 
@@ -263,8 +263,8 @@ export const initChatUi = {
           } 
 
 
-          const notifyDot = document.getElementById('notify-dot');
-          if (notifyDot) notifyDot.classList.add('unread-notify')
+          /*const notifyDot = document.getElementById('notify-dot');
+          if (notifyDot) notifyDot.classList.add('unread-notify')*/
 
             if (Notification.permission === 'granted') {
               const isPrivate = newMessage.room_id.startsWith('private_');
@@ -282,7 +282,7 @@ export const initChatUi = {
 
     const toggleUserList = () => {
         const usersWindow =   document.querySelector('.users-window')
-        const notifyDot = document.getElementById('notify-dot');
+       // const notifyDot = document.getElementById('notify-dot');
         if (
           !(usersWindow instanceof HTMLElement) ||
           !(onlineBtn instanceof HTMLElement)
@@ -297,9 +297,9 @@ export const initChatUi = {
       }
              
      if (usersWindow.classList.contains('users-show')) {
-        if (notifyDot) {
+      /*  if (notifyDot) {
             notifyDot.classList.remove('unread-notify')
-      }
+      }*/
       serviceBag.loadOnlineUsers((clickedUser) => {
         switchPrivateChat(clickedUser);
 
@@ -373,7 +373,7 @@ export const initChatUi = {
     const initApp = async() => {
       toggleLoader(true, 'Finding Your Messages...');
 
-      const timeoutLimit = 7000;
+      const timeoutLimit = 10000;
       const timeoutPromise = new Promise((_, reject)=>          setTimeout(() => reject(new Error('Portal Timeout')), timeoutLimit)
      );   
 

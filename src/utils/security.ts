@@ -1,9 +1,11 @@
 export const sanitize = (rawInput: string): string => {
   if (!rawInput) return '';
-   
-  const placeholder = document.createElement('div');
-  placeholder.innerText = rawInput;
-  return placeholder.innerHTML
-
+    
+  return rawInput
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
 
 }

@@ -23,6 +23,11 @@
 ### Build Pipeline
 - Built pipelines on Vercel and Hugging Face to handle TypeScript build steps.
 
+## Security and Quality(v3.8.0 - v4.0.0)
+- **Strict Typing** Used TypeScript interfaces to ensure data integrity.
+- **XSS Protection** Implemented sanitization logic to protect against HTML/Scripts injections.
+- **Automated Testing**: Integrated **Jasmine** for unit testing the sanitization logic to ensure reliability of security.
+
 ## Tech Stack
 
 - **Frontend**: HTML5, CSS3, TypeScript.
